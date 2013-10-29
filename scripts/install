@@ -32,6 +32,7 @@ sudo apt-get install transmission-daemon -y -qq
 sudo mkdir -p /home/yunohost.transmission/{progress,completed}
 sudo chgrp debian-transmission /home/yunohost.transmission/{progress,completed}
 sudo chmod 770 -R /home/yunohost.transmission/{progress,completed}
+sudo chown -R www-data /home/yunohost.transmission/completed
 
 # Configure Transmission and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/settings.json
