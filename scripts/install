@@ -1,0 +1,38 @@
+#!/bin/bash                                                                                                                                                                                      
+
+# Retrieve arguments
+domain=$1
+path=$2
+
+sudo yunohost app checkurl $domain$path -a transmission
+if [[ ! $? -eq 0 ]]; then exit 1 fi
+
+# Remove trailing "/" for next commands
+path=${path%/}
+
+# Check port availability
+sudo yunohost app checkport 9091
+if [[ ! $? -eq 0 ]]; then exit 1 fi
+sudo yunohost app checkport 51413
+if [[ ! $? -eq 0 ]]; then exit 1 fi
+
+# Install official debian package
+sudo apt-get install transmission-daemon -y -qq 
+
+# Make directories and set rights
+sudo mkdir -p /home/yunohost.transmission/{progress,completed}
+sudo chgrp debian-transmission /home/yunohost.transmission/{progress,completed}
+sudo chmod 770 -R /home/yunohost.transmission/{progress,completed}
+
+# Configure Transmission and reload
+sed -i "s@/PATHTOCHANGE@$path@g" ../conf/settings.json
+sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
+sudo service transmission-daemon reload
+
+# Open port in firewall
+sudo yunohost firewall allow TCP 51413
+
+# Configure Nginx and reload
+sed -i "s@/PATHTOCHANGE@$path@g" ../conf/nginx.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/transmission.conf
+sudo service nginx reload 
