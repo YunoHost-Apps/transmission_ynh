@@ -16,14 +16,17 @@
       {
         "name": "domain",
         "ask": {
-          "en": "Choose a domain for Transmission (i.e. mydomain.org)"
-        }
+          "en": "Choose a domain for Transmission"
+        },
+        "example": "domain.org"
       },
       {
         "name": "path",
         "ask": {
-          "en": "Choose a path for Transmission (i.e. /torrent)"
-        }
+          "en": "Choose a path for Transmission"
+        },
+        "example": "/torrent",
+        "default": "/torrent"
       }
     ]
   }
