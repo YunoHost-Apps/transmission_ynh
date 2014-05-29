@@ -2,7 +2,7 @@
 
 sudo service transmission-daemon stop
 sudo yunohost firewall disallow TCP 51413
-sudo yunohost app service -R transmission-daemon
+sudo yunohost service remove transmission-daemon
 domain=$(sudo yunohost app setting transmission domain)
 
 sudo rm /etc/nginx/conf.d/$domain.d/transmission.conf
