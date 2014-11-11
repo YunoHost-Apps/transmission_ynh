@@ -1,5 +1,5 @@
 
     /* Inserted by Yunohost install script */
-    div#toolbar > div#toolbar-downloads {
-        background: url("images/toolbar-downloads.png") no-repeat;
+    div#toolbar > #toolbar-downloads {
+        background-image: url("images/toolbar-downloads.png");
     }
