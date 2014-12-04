@@ -5,6 +5,7 @@
     "en": "A Fast, Easy, and Free BitTorrent Client",
     "fr": "Un client BitTorrent libre et rapide"
   },
+  "license": "GPL-2 & MIT",
   "developer": {
     "name": "kload",
     "email": "kload@kload.fr",
