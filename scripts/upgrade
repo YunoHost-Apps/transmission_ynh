@@ -29,7 +29,7 @@ if ! grep 'toolbar-downloads' /usr/share/transmission/web/index.html --quiet; th
 
     sudo cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
     sudo bash -c 'cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
-    sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\"></a>@g" /usr/share/transmission/web/index.html
+    sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>@g" /usr/share/transmission/web/index.html
 fi
 
 
