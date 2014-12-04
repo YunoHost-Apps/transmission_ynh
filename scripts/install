@@ -30,8 +30,7 @@ sudo apt-get install transmission-daemon -y -qq
 
 # Make directories and set rights
 sudo mkdir -p /home/yunohost.transmission/{progress,completed}
-sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/
-sudo chown -R debian-transmission:www-data /home/yunohost.transmission/completed
+sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
 sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
 sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
 
