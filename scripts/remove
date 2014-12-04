@@ -8,6 +8,9 @@ domain=$(sudo yunohost app setting transmission domain)
 sudo rm /etc/nginx/conf.d/$domain.d/transmission.conf
 sudo rm -rf /home/yunohost.transmission
 
+#removing admin from the debian-transmission group
+sudo gpasswd -d admin debian-transmission
+
 sudo apt-get remove -y -qq transmission-daemon
 
 sudo service nginx reload
