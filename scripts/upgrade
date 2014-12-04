@@ -15,9 +15,10 @@ sudo apt-get install transmission-daemon -y -qq
 
 # Make directories and set rights
 sudo mkdir -p /home/yunohost.transmission/{progress,completed}
-sudo chgrp debian-transmission /home/yunohost.transmission/{progress,completed}
-sudo chmod 755 -R /home/yunohost.transmission
-sudo chmod 770 -R /home/yunohost.transmission/{progress,completed}
+sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
+sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress
+sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
+sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
 
 # Configure Transmission and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/settings.json
@@ -29,7 +30,7 @@ if ! grep 'toolbar-downloads' /usr/share/transmission/web/index.html --quiet; th
 
     sudo cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
     sudo bash -c 'cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
-    sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\"></a>@g" /usr/share/transmission/web/index.html
+    sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>@g" /usr/share/transmission/web/index.html
 fi
 
 
