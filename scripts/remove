@@ -10,5 +10,8 @@ sudo rm -rf /home/yunohost.transmission
 
 sudo apt-get remove -y -qq transmission-daemon
 
+#removing admin from the debian-transmission group
+sudo deluser admin debian-transmission
+
 sudo service nginx reload
 sudo yunohost app ssowatconf                                                                                                                                                                     
