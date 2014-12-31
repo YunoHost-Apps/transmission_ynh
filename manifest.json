@@ -5,16 +5,17 @@
     "en": "A Fast, Easy, and Free BitTorrent Client",
     "fr": "Un client BitTorrent libre et rapide"
   },
-  "developer": {
+  "url": "https://www.transmissionbt.com/",
+  "maintainer": {
     "name": "kload",
-    "email": "kload@kload.fr",
-    "url": "http://kload.fr"
+    "email": "kload@kload.fr"
   },
   "multi_instance": "false",
   "arguments": {
     "install": [
       {
         "name": "domain",
+        "type": "domain",
         "ask": {
           "en": "Choose a domain for Transmission"
         },
@@ -22,6 +23,7 @@
       },
       {
         "name": "path",
+        "type": "path",
         "ask": {
           "en": "Choose a path for Transmission"
         },
