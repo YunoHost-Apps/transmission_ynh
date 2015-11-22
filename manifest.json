@@ -11,6 +11,10 @@
     "email": "kload@kload.fr"
   },
   "multi_instance": "false",
+  "services": [
+      "nginx",
+      "transmission-daemon"
+  ],
   "arguments": {
     "install": [
       {
