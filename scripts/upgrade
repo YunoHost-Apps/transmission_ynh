@@ -1,8 +1,13 @@
-#!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
+# Get app instance name
+app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve arguments
-domain=$(sudo yunohost app setting transmission domain)
-path=$(sudo yunohost app setting transmission path)
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
 
 # Remove trailing "/" for next commands
 path=${path%/}
@@ -37,5 +42,5 @@ fi
 
 # Configure Nginx and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/transmission.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 sudo service nginx reload

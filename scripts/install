@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# Retrieve arguments
-domain=$1
-path=$2
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
 
-sudo yunohost app checkurl $domain$path -a transmission
+# Get app instance name
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve arguments
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+
+sudo yunohost app checkurl $domain$path -a $app
 if [[ ! $? -eq 0 ]]; then
   exit 1
 fi
@@ -50,6 +56,5 @@ sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<
 
 # Configure Nginx and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/transmission.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 sudo service nginx reload
-echo $?
