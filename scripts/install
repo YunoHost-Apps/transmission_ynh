@@ -50,9 +50,9 @@ sudo service transmission-daemon reload
 sudo yunohost service add transmission-daemon
 
 # Patch sources to add a download button
-sudo cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
-sudo bash -c 'cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
-sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>@g" /usr/share/transmission/web/index.html
+# sudo cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
+# sudo bash -c 'cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
+# sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>@g" /usr/share/transmission/web/index.html
 
 # Configure Nginx and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf

@@ -21,10 +21,11 @@ if [[ ! $? -eq 0 ]]; then
 fi
 
 sources_path=/usr/share/transmission
-if [ -d $sources_path ]; then
-    echo "There is already a directory: $sources_path " | sudo tee /dev/stderr
-    exit 1
-fi
+# Do not check for empty source_path because 'apt-get remove' does not clean everything
+# if [ -d $sources_path ]; then
+#     echo "There is already a directory: $sources_path " | sudo tee /dev/stderr
+#     exit 1
+# fi
 
 data_path=/home/yunohost.transmission
 if [ -d $data_path ]; then
@@ -39,10 +40,11 @@ if [ -f $nginx_conf ]; then
 fi
 
 app_conf=/etc/transmission-daemon/settings.json
-if [ -f $app_conf ]; then
-    echo "There is already a PHP-FPM conf file at this path: $app_conf " | sudo tee /dev/stderr
-    exit 1
-fi
+# Do not check for empty app_conf because 'apt-get remove' does not clean everything
+# if [ -f $app_conf ]; then
+#     echo "There is already a PHP-FPM conf file at this path: $app_conf " | sudo tee /dev/stderr
+#     exit 1
+# fi
 
 # Open port in firewall
 sudo yunohost firewall allow TCP 51413 > /dev/null 2>&1
@@ -69,7 +71,7 @@ sudo cp -a "./data" $data_path
 
 # Restore conf files
 sudo cp -a "./conf/nginx.conf" $nginx_conf
-sudo cp -a "./conf/transmission.conf" $app_conf
+sudo cp -a "./conf/transmission.json" $app_conf
 
 # Reload Nginx
 sudo service nginx reload

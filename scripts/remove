@@ -19,6 +19,8 @@ sudo rm -rf /home/yunohost.transmission
 
 # Remove Debian package
 sudo apt-get remove -y -qq transmission-daemon
+# sudo rm -rf /usr/share/transmission
+# sudo rm -rf /etc/transmission-daemon/settings.json
 
 # Reload nginx and ssowatconf
 sudo service nginx reload
