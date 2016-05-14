@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
+# Source YNH helpers
+. /usr/share/yunohost/helpers
+
+# Get app instance name
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve arguments
+domain=$(sudo yunohost app setting $app domain)
+path=$(sudo yunohost app setting $app path)
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a $app
+if [[ ! $? -eq 0 ]]; then
+    echo "There is already an app on this URL : $domain$path" | sudo tee /dev/stderr
+    exit 1
+fi
+
+sources_path=/usr/share/transmission
+if [ -d $sources_path ]; then
+    echo "There is already a directory: $sources_path " | sudo tee /dev/stderr
+    exit 1
+fi
+
+data_path=/home/yunohost.transmission
+if [ -d $data_path ]; then
+    echo "There is already a directory: $data_path " | sudo tee /dev/stderr
+    exit 1
+fi
+
+nginx_conf=/etc/nginx/conf.d/$domain.d/$app.conf
+if [ -f $nginx_conf ]; then
+    echo "There is already a nginx conf file at this path: $nginx_conf " | sudo tee /dev/stderr
+    exit 1
+fi
+
+app_conf=/etc/transmission-daemon/settings.json
+if [ -f $app_conf ]; then
+    echo "There is already a PHP-FPM conf file at this path: $app_conf " | sudo tee /dev/stderr
+    exit 1
+fi
+
+# Open port in firewall
+sudo yunohost firewall allow TCP 51413 > /dev/null 2>&1
+
+# Install official debian package
+sudo apt-get install transmission-daemon -y -qq
+
+# Make directories and set rights
+sudo mkdir -p /home/yunohost.transmission/{progress,completed}
+sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
+sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress
+sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
+sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
+
+# Reload transmission service
+sudo service transmission-daemon reload
+
+# Monitor service
+sudo yunohost service add transmission-daemon
+
+# Restore sources & data
+sudo cp -a "./sources" $sources_path
+sudo cp -a "./data" $data_path
+
+# Restore conf files
+sudo cp -a "./conf/nginx.conf" $nginx_conf
+sudo cp -a "./conf/transmission.conf" $app_conf
+
+# Reload Nginx
+sudo service nginx reload

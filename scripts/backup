@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
+# Source YNH helpers
+. /usr/share/yunohost/helpers
+
+# Get app instance name
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve arguments
+domain=$(sudo yunohost app setting $app domain)
+
+# Backup directory location for the app from where the script is executed and 
+# which will be compressed afterward
+backup_dir=$YNH_APP_BACKUP_DIR
+
+# Backup sources & data
+ynh_backup "/home/yunohost.transmission" "data"
+ynh_backup "/usr/share/transmission" "sources"
+
+# Copy configuration files
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "conf/nginx.conf"
+ynh_backup "/etc/transmission-daemon/settings.json" "conf/transmission.json"
