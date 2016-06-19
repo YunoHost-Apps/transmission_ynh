@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# Retrieve arguments
-domain=$1
-path=$2
+# Exit on command errors and treat unset variables as an error
+set -eu
 
-sudo yunohost app checkurl $domain$path -a transmission
+# Get app instance name
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve arguments
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+
+sudo yunohost app checkurl $domain$path -a $app
 if [[ ! $? -eq 0 ]]; then
   exit 1
 fi
@@ -50,16 +56,15 @@ sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<
 
 # Configure Nginx and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/transmission.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 sudo service nginx reload
-echo $?
 
 # Add yunohost.multimedia directory
 wget https://github.com/maniackcrudelis/yunohost.multimedia/archive/master.zip
 unzip master.zip
 sudo ./yunohost.multimedia-master/script/ynh_media_build.sh
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh "/home/yunohost.transmission" "Torrents"
+sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission" --dest="share/Torrents"
 # And share completed directory
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh "/home/yunohost.transmission/completed" "Torrents"
+sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission/completed" --dest="share/Torrents"
 
