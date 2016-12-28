@@ -45,7 +45,7 @@
     "rpc-authentication-required": false,
     "rpc-bind-address": "127.0.0.1", 
     "rpc-enabled": true,
-    "rpc-password": "{22ef1abe361f619946cf9ce68c442d27f73512d5lL3qJ6bY",
+    "rpc-password": "RPCPASSWORDTOCHANGE",
     "rpc-port": 9091,
     "rpc-url": "PATHTOCHANGE/transmission/",
     "rpc-username": "transmission",

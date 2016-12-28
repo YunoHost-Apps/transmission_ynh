@@ -6,9 +6,13 @@ set -eu
 # Get app instance name
 app=$YNH_APP_INSTANCE_NAME
 
+# Source app helpers
+. /usr/share/yunohost/helpers
+
 # Retrieve arguments
-domain=$(sudo yunohost app setting "$app" domain)
-path=$(sudo yunohost app setting "$app" path)
+domain=$(ynh_app_setting_get "$app" domain)
+path=$(ynh_app_setting_get "$app" path)
+rpcpassword=$(ynh_app_setting_get "$app" rpcpassword)
 
 # Remove trailing "/" for next commands
 path=${path%/}
@@ -26,7 +30,14 @@ sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmissio
 sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
 sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
 
+# Create RPC password if none exists
+if [ -z "$rpcpassword" ]; then
+    rpcpassword=$(ynh_string_random)
+	ynh_app_setting_set "$app" rpcpassword "$rpcpassword"
+fi
+
 # Configure Transmission and reload
+sed -i "s@RPCPASSWORDTOCHANGE@$rpcpassword@g" ../conf/settings.json
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/settings.json
 sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
 sudo service transmission-daemon reload
