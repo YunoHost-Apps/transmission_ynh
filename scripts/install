@@ -44,7 +44,7 @@ sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 
 # Configure Transmission and reload
 sed -i "s@PATHTOCHANGE@$path@g" ../conf/settings.json
 sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
-sudo service transmission-daemon reload
+sudo service transmission-daemon restart
 
 # Monitor service
 sudo yunohost service add transmission-daemon
