@@ -46,6 +46,15 @@ sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 
 sudo find /home/yunohost.transmission/watched -type d | while read LINE; do sudo chmod 770 "$LINE" ; done
 ynh_app_setting_set "$app" watchdir "/home/yunohost.transmission/watched"
 
+# YunoHost multimedia
+wget -qq https://github.com/YunoHost-Apps/yunohost.multimedia/archive/master.zip
+unzip -qq master.zip
+sudo ./yunohost.multimedia-master/script/ynh_media_build.sh
+# Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
+sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission" --dest="share/Torrents"
+# And share completed directory
+sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission/completed" --dest="share/Torrents"
+
 # Create RPC password
 rpcpassword=$(ynh_string_random)
 ynh_app_setting_set "$app" rpcpassword "$rpcpassword"
