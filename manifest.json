@@ -1,43 +1,43 @@
 {
-  "name": "Transmission",
-  "id": "transmission",
-  "packaging_format": 1,
-  "requirements": {
-    "yunohost": ">= 2.4.0"
-  },
-  "description": {
-    "en": "A Fast, Easy, and Free BitTorrent Client",
-    "fr": "Un client BitTorrent libre et rapide"
-  },
-  "url": "https://www.transmissionbt.com/",
-  "maintainer": {
-    "name": "kload",
-    "email": "kload@kload.fr"
-  },
-  "multi_instance": "false",
-  "services": [
-      "nginx",
-      "transmission-daemon"
-  ],
-  "arguments": {
-    "install": [
-      {
-        "name": "domain",
-        "type": "domain",
-        "ask": {
-          "en": "Choose a domain for Transmission"
-        },
-        "example": "domain.org"
-      },
-      {
-        "name": "path",
-        "type": "path",
-        "ask": {
-          "en": "Choose a path for Transmission"
-        },
-        "example": "/torrent",
-        "default": "/torrent"
-      }
-    ]
-  }
+	"name": "Transmission",
+	"id": "transmission",
+	"packaging_format": 1,
+	"requirements": {
+		"yunohost": ">= 2.4.0"
+	},
+	"description": {
+		"en": "A Fast, Easy, and Free BitTorrent Client",
+		"fr": "Un client BitTorrent libre et rapide"
+	},
+	"url": "https://www.transmissionbt.com/",
+	"license": " GPL-3.0",
+	"maintainer": {
+		"name": "Groupe Apps",
+		"email": "apps_group@yunohost.org"
+	},
+	"multi_instance": false,
+	"services": [
+		"nginx"
+	],
+	"arguments": {
+		"install": [
+			{
+				"name": "domain",
+				"type": "domain",
+				"ask": {
+					"en": "Choose a domain for Transmission"
+				},
+				"example": "domain.org"
+			},
+			{
+				"name": "path",
+				"type": "path",
+				"ask": {
+					"en": "Choose a path for Transmission"
+				},
+				"example": "/torrent",
+				"default": "/torrent"
+			}
+		]
+	}
 }

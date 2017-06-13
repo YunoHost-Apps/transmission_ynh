@@ -1,26 +1,69 @@
 #!/bin/bash
 
-# Retreive app settings
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
 app=$YNH_APP_INSTANCE_NAME
-domain=$(sudo yunohost app setting $app domain)
 
-# Stop service
-sudo service transmission-daemon stop
-sudo yunohost service remove transmission-daemon
+domain=$(ynh_app_setting_get $app domain)
+port=$(ynh_app_setting_get $app port)
+peer_port=$(ynh_app_setting_get $app peer_port)
 
-# Disallow specific port
-sudo yunohost firewall disallow TCP 51413
+#=================================================
+# STANDARD REMOVE
+#=================================================
+# REMOVE TRANSMISSION-DAEMON
+#=================================================
 
-# Remove nginx configuration
-sudo rm /etc/nginx/conf.d/$domain.d/$app.conf
+sudo apt-get -y purge transmission-daemon
 
-# Remove data
-sudo rm -rf /home/yunohost.transmission
+#=================================================
+# DISABLE SERVICE IN ADMIN PANEL
+#=================================================
 
-# Remove Debian package
-sudo apt-get remove -y -qq transmission-daemon
-# sudo rm -rf /usr/share/transmission
-# sudo rm -rf /etc/transmission-daemon/settings.json
+if sudo yunohost service status | grep -q transmission-daemon	# Test l'existence du service dans Yunohost
+then
+	echo "Remove transmission-daemon service"
+	sudo yunohost service remove transmission-daemon
+fi
 
-# Reload nginx
-sudo service nginx reload
+#=================================================
+# CLOSE THE PORTS
+#=================================================
+
+ALL_QUIET sudo yunohost firewall disallow TCP $port
+ALL_QUIET sudo yunohost firewall disallow TCP $peer_port
+
+#=================================================
+# REMOVE THE NGINX CONFIGURATION
+#=================================================
+
+ynh_remove_nginx_config	# Suppression de la configuration nginx
+
+#=================================================
+# SPECIFIC REMOVE
+#=================================================
+# REMOVE DATA
+#=================================================
+
+backup_core_only=$(ynh_app_setting_get $app backup_core_only)
+if [ -z $backup_core_only ]	# Si backup_core_only a une valeur dans le fichier settings.yml, ne supprime pas le dossier data
+then
+	ynh_secure_remove /home/yunohost.transmission
+fi
+
+# And remove the link in yunohost.multimedia
+sudo rm "/home/yunohost.multimedia/share/Torrents"
+sudo rm "/home/yunohost.multimedia/share/Torrent to download"
+
+ynh_secure_remove /usr/share/transmission
