@@ -53,11 +53,12 @@ sudo yunohost firewall allow TCP 51413 > /dev/null 2>&1
 sudo apt-get install transmission-daemon -y -qq
 
 # Make directories and set rights
-sudo mkdir -p /home/yunohost.transmission/{progress,completed}
+sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
 sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress
+sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress /home/yunohost.transmission/watched
 sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
 sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
+sudo find /home/yunohost.transmission/watched -type d | while read LINE; do sudo chmod 770 "$LINE" ; done
 
 # Reload transmission service
 sudo service transmission-daemon reload
