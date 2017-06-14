@@ -69,7 +69,7 @@ ynh_package_install transmission-daemon
 # Transmission has to be stopped before modifying its config
 sudo systemctl stop transmission-daemon
 
-sudo rm /etc/transmission-daemon/settings.json
+sudo rm -f /etc/transmission-daemon/settings.json
 ynh_restore_file "/etc/transmission-daemon/settings.json"
 
 #=================================================
