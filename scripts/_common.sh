@@ -235,6 +235,20 @@ ynh_find_port () {
 	echo $port
 }
 
+# Delete a system user
+#
+# usage: ynh_system_user_delete user_name
+# | arg: user_name - Name of the system user that will be create
+ynh_system_user_delete () {
+    if ynh_system_user_exists "$1"	# Check if the user exists on the system
+    then
+		echo "Remove the user $1" >&2
+		sudo userdel $1
+	else
+		echo "The user $1 was not found" >&2
+    fi
+}
+
 # Substitute/replace a string by another in a file
 #
 # usage: ynh_replace_string match_string replace_string target_file

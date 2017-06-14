@@ -25,7 +25,7 @@ peer_port=$(ynh_app_setting_get $app peer_port)
 # REMOVE TRANSMISSION-DAEMON
 #=================================================
 
-sudo apt-get -y purge transmission-daemon
+ynh_package_autoremove transmission-daemon
 
 #=================================================
 # DISABLE SERVICE IN ADMIN PANEL
@@ -66,4 +66,15 @@ fi
 sudo rm "/home/yunohost.multimedia/share/Torrents"
 sudo rm "/home/yunohost.multimedia/share/Torrent to download"
 
+# Remove config
+ynh_secure_remove /etc/transmission-daemon
+# And data
 ynh_secure_remove /usr/share/transmission
+
+#=================================================
+# GENERIC FINALISATION
+#=================================================
+# REMOVE DEDICATED USER
+#=================================================
+
+ynh_system_user_delete debian-transmission

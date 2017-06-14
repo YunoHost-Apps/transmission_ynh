@@ -25,10 +25,12 @@ peer_port=$(ynh_app_setting_get $app peer_port)
 #=================================================
 
 if [ -z $port ]; then
-	ynh_app_setting_set $app port 9091
+	port=9091
+	ynh_app_setting_set $app port $port
 fi
 if [ -z $peer_port ]; then
-	ynh_app_setting_set $app peer_port 51413
+	peer_port=51413
+	ynh_app_setting_set $app peer_port $peer_port
 fi
 
 #=================================================
