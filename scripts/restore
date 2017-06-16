@@ -69,14 +69,18 @@ ynh_package_install transmission-daemon
 # Transmission has to be stopped before modifying its config
 sudo systemctl stop transmission-daemon
 
-sudo rm -f /etc/transmission-daemon/settings.json
-ynh_restore_file "/etc/transmission-daemon/settings.json"
+ynh_secure_remove /etc/transmission-daemon/settings.json
+ynh_restore_file /etc/transmission-daemon/settings.json
 
 #=================================================
 # RESTORE DATA
 #=================================================
 
-ynh_restore_file "/usr/share/transmission"
+ynh_secure_remove /usr/share/transmission
+ynh_restore_file /usr/share/transmission
+
+ynh_secure_remove /var/lib/transmission-daemon
+ynh_restore_file /var/lib/transmission-daemon
 
 if [ -d "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission" ]	# Le dossier data est restauré seulement si il existe. Si le backup a été fait avec l'option backup_core_only, ce dossier n'a pas été sauvegardé.
 then

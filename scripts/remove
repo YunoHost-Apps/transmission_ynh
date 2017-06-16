@@ -68,8 +68,10 @@ sudo rm "/home/yunohost.multimedia/share/Torrent to download"
 
 # Remove config
 ynh_secure_remove /etc/transmission-daemon
-# And data
+# Web interface
 ynh_secure_remove /usr/share/transmission
+# And data
+ynh_secure_remove /var/lib/transmission-daemon
 
 #=================================================
 # GENERIC FINALISATION

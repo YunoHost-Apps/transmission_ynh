@@ -52,6 +52,9 @@ ynh_backup "/etc/transmission-daemon/settings.json" "${YNH_APP_BACKUP_DIR}/etc/t
 CHECK_SIZE "/usr/share/transmission"
 ynh_backup "/usr/share/transmission" "${YNH_APP_BACKUP_DIR}/usr/share/transmission"
 
+CHECK_SIZE "/var/lib/transmission-daemon"
+ynh_backup "/var/lib/transmission-daemon" "${YNH_APP_BACKUP_DIR}/var/lib/transmission-daemon"
+
 backup_core_only=$(ynh_app_setting_get $app backup_core_only)
 if [ -z $backup_core_only ]	# Si backup_core_only a une valeur dans le fichier settings.yml, ne sauvegarde pas le dossier data
 then
