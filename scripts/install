@@ -82,7 +82,7 @@ sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
 
 sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
 sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
-sudo chmod -R 640 /home/yunohost.transmission
+sudo chmod -R 764 /home/yunohost.transmission
 sudo chmod -R 777 /home/yunohost.transmission/watched
 
 #=================================================
