@@ -17,7 +17,8 @@
 	},
 	"multi_instance": false,
 	"services": [
-		"nginx"
+		"nginx",
+		"transmission-daemon"
 	],
 	"arguments": {
 		"install": [

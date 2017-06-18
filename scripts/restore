@@ -110,7 +110,7 @@ ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to
 # ENABLE SERVICE IN ADMIN PANEL
 #=================================================
 
-sudo yunohost service add transmission-daemon
+sudo yunohost service add transmission-daemon --log "/var/log/syslog"
 
 #=================================================
 # START TRANSMISSION
