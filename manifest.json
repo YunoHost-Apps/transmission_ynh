@@ -12,7 +12,7 @@
 	"url": "https://www.transmissionbt.com/",
 	"license": " GPL-3.0",
 	"maintainer": {
-		"name": "Groupe Apps",
+		"name": "Apps Group",
 		"email": "apps_group@yunohost.org"
 	},
 	"multi_instance": false,

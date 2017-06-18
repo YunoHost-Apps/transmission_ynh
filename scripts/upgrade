@@ -57,6 +57,7 @@ path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du
 #=================================================
 
 # Add a "/" at the end of path_url for next commands
+# To avoid a double / in the nginx config file.
 [ "$path_url" = "/" ] || path_url=${path_url}/
 ynh_nginx_config
 
@@ -107,15 +108,13 @@ ynh_store_file_checksum /etc/transmission-daemon/settings.json
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
 
-wget -qq https://github.com/YunoHost-Apps/yunohost.multimedia/archive/master.zip
-unzip -qq master.zip
-sudo ./yunohost.multimedia-master/script/ynh_media_build.sh
+ynh_multimedia_build_main_dir
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission" --dest="share/Torrents"
+ynh_multimedia_addfolder "/home/yunohost.transmission" "share/Torrents"
 # And share completed directory
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission/completed" --dest="share/Torrents"
+ynh_multimedia_addfolder "/home/yunohost.transmission/completed" "share/Torrents"
 # Share also watched directory, to allow to use it easily
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission/watched" --dest="share/Torrent to download"
+ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to download"
 
 #=================================================
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
