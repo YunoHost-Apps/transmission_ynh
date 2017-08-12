@@ -1,72 +1,146 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Get app instance name
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
 app=$YNH_APP_INSTANCE_NAME
 
-# Source app helpers
-. /usr/share/yunohost/helpers
+domain=$(ynh_app_setting_get $app domain)
+path_url=$(ynh_app_setting_get $app path)
+port=$(ynh_app_setting_get $app port)
+peer_port=$(ynh_app_setting_get $app peer_port)
 
-# Retrieve arguments
-domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
-rpcpassword=$(ynh_app_setting_get "$app" rpcpassword)
-watchdir=$(ynh_app_setting_get "$app" watchdir)
+#=================================================
+# FIX OLD THINGS
+#=================================================
 
-# Remove trailing "/" for next commands
-path=${path%/}
+if [ -z $port ]; then
+	port=9091
+	ynh_app_setting_set $app port $port
+fi
+if [ -z $peer_port ]; then
+	peer_port=51413
+	ynh_app_setting_set $app peer_port $peer_port
+fi
 
-# Open port in firewall
-sudo yunohost firewall allow TCP 51413 > /dev/null 2>&1
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
 
-# Upgrade official debian package
-sudo apt-get install transmission-daemon -y -qq
+ynh_app_setting_set $app backup_core_only 1 # Indique au backup/restore de ne pas sauvegarder le dossier de data.
+BACKUP_BEFORE_UPGRADE	# Backup the current version of the app
+ynh_clean_setup () {
+	BACKUP_FAIL_UPGRADE	# restore it if the upgrade fails
+}
+ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
 
-# Make directories and set rights
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du path.
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Add a "/" at the end of path_url for next commands
+# To avoid a double / in the nginx config file.
+[ "$path_url" = "/" ] || path_url=${path_url}/
+ynh_nginx_config
+
+#=================================================
+# SPECIFIC UPGRADE
+#=================================================
+# CREATE DIRECTORIES
+#=================================================
+
 sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
+
+#=================================================
+# SECURING FILES AND DIRECTORIES
+#=================================================
+
 sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress /home/yunohost.transmission/watched
-sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
-sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
-sudo find /home/yunohost.transmission/watched -type d | while read LINE; do sudo chmod 770 "$LINE" ; done
-# Add watchdir in settings if it does not exist yet (previous versions)
-if [ -z "$watchdir" ]; then
-    ynh_app_setting_set "$app" watchdir "/home/yunohost.transmission/watched"
-fi
+sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
+sudo chmod -R 640 /home/yunohost.transmission
+sudo chmod -R 777 /home/yunohost.transmission/watched
 
-# YunoHost multimedia
-wget -qq https://github.com/YunoHost-Apps/yunohost.multimedia/archive/master.zip
-unzip -qq master.zip
-sudo ./yunohost.multimedia-master/script/ynh_media_build.sh
-# Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission" --dest="share/Torrents"
-# And share completed directory
-sudo ./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="/home/yunohost.transmission/completed" --dest="share/Torrents"
+#=================================================
+# CONFIGURE TRANSMISSION
+#=================================================
 
-# Create RPC password if none exists
-if [ -z "$rpcpassword" ]; then
-    rpcpassword=$(ynh_string_random)
-	ynh_app_setting_set "$app" rpcpassword "$rpcpassword"
-fi
+# Transmission has to be stopped before modifying its config
+sudo systemctl stop transmission-daemon
 
-# Configure Transmission and reload
-sudo service transmission-daemon stop
-sed -i "s@RPCPASSWORDTOCHANGE@$rpcpassword@g" ../conf/settings.json
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/settings.json
+# Créé un backup du fichier de config si il a été modifié.
+ynh_backup_if_checksum_is_different /etc/transmission-daemon/settings.json
+
+# Create a RPC password
+rpcpassword=$(ynh_string_random)
+ynh_app_setting_set $app rpcpassword "$rpcpassword"
+
+ynh_replace_string "__RPC_PASSWORD_TO_CHANGE__" "$rpcpassword" ../conf/settings.json
+ynh_replace_string "__PATH__" "$path_url" ../conf/settings.json
+ynh_replace_string "__PEER_PORT__" "$peer_port" ../conf/settings.json
+ynh_replace_string "__PORT__" "$port" ../conf/settings.json
 sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
-sudo service transmission-daemon start
 
-# Patch sources to add a download button
-if ! grep 'toolbar-downloads' /usr/share/transmission/web/index.html --quiet; then
+#=================================================
+# STORE THE CHECKSUM OF THE CONFIG FILE
+#=================================================
 
-    sudo cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
-    sudo bash -c 'cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
-    sudo sed -i "s@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>@<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>@g" /usr/share/transmission/web/index.html
+ynh_store_file_checksum /etc/transmission-daemon/settings.json
+
+#=================================================
+# YUNOHOST MULTIMEDIA INTEGRATION
+#=================================================
+
+ynh_multimedia_build_main_dir
+# Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
+ynh_multimedia_addfolder "/home/yunohost.transmission" "share/Torrents"
+# And share completed directory
+ynh_multimedia_addfolder "/home/yunohost.transmission/completed" "share/Torrents"
+# Share also watched directory, to allow to use it easily
+ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to download"
+
+#=================================================
+# PATCH SOURCE TO ADD A DOWNLOAD BUTTON
+#=================================================
+
+sudo cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
+if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/web/style/transmission/common.css
+then
+	sudo bash -c 'cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
 fi
+ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
-# Configure Nginx and reload
-sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
-sudo service nginx reload
+#=================================================
+# START TRANSMISSION
+#=================================================
+
+sudo systemctl start transmission-daemon
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+
+sudo systemctl reload nginx
+
+#=================================================
+# REMOVE BACKUP_CORE_ONLY
+#=================================================
+
+ynh_app_setting_delete $app backup_core_only

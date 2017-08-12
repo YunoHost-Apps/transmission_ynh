@@ -1,25 +1,65 @@
 #!/bin/bash
 
+#=================================================
+# GENERIC STARTING
+#=================================================
+# MANAGE FAILURE OF THE SCRIPT
+#=================================================
+
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# Source YNH helpers
-. /usr/share/yunohost/helpers
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Get app instance name
+if [ ! -e _common.sh ]; then
+	# Rapatrie le fichier de fonctions si il n'est pas dans le dossier courant
+	sudo cp ../settings/scripts/_common.sh ./_common.sh
+	sudo chmod a+rx _common.sh
+fi
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
 app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting $app domain)
+domain=$(ynh_app_setting_get $app domain)
 
-# Backup directory location for the app from where the script is executed and 
-# which will be compressed afterward
-backup_dir=$YNH_APP_BACKUP_DIR
+#=================================================
+# STANDARD BACKUP STEPS
+#=================================================
+# BACKUP OF THE NGINX CONFIGURATION
+#=================================================
 
-# Backup sources & data
-ynh_backup "/home/yunohost.transmission" "data"
-ynh_backup "/usr/share/transmission" "sources"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${YNH_APP_BACKUP_DIR}/etc/nginx/conf.d/$domain.d/$app.conf"
 
-# Copy configuration files
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "conf/nginx.conf"
-ynh_backup "/etc/transmission-daemon/settings.json" "conf/transmission.json"
+#=================================================
+# SPECIFIC BACKUP
+#=================================================
+# BACKUP TRANSMISSION CONFIGURATION
+#=================================================
+
+ynh_backup "/etc/transmission-daemon/settings.json" "${YNH_APP_BACKUP_DIR}/etc/transmission-daemon/settings.json"
+
+#=================================================
+# BACKUP DATA
+#=================================================
+
+CHECK_SIZE "/usr/share/transmission"
+ynh_backup "/usr/share/transmission" "${YNH_APP_BACKUP_DIR}/usr/share/transmission"
+
+CHECK_SIZE "/var/lib/transmission-daemon"
+ynh_backup "/var/lib/transmission-daemon" "${YNH_APP_BACKUP_DIR}/var/lib/transmission-daemon"
+
+backup_core_only=$(ynh_app_setting_get $app backup_core_only)
+if [ -z $backup_core_only ]	# Si backup_core_only a une valeur dans le fichier settings.yml, ne sauvegarde pas le dossier data
+then
+	CHECK_SIZE "/home/yunohost.transmission"
+	ynh_backup "/home/yunohost.transmission" "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission"
+else
+	echo "Data dir will not saved, because backup_core_only is set." >&2
+fi

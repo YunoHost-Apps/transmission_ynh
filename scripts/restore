@@ -1,78 +1,125 @@
 #!/bin/bash
 
+#=================================================
+# GENERIC STARTING
+#=================================================
+# MANAGE FAILURE OF THE SCRIPT
+#=================================================
+
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# Source YNH helpers
-. /usr/share/yunohost/helpers
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Get app instance name
+if [ ! -e _common.sh ]; then
+	# Rapatrie le fichier de fonctions si il n'est pas dans le dossier courant
+	sudo cp ../settings/scripts/_common.sh ./_common.sh
+	sudo chmod a+rx _common.sh
+fi
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
 app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting $app domain)
-path=$(sudo yunohost app setting $app path)
+domain=$(ynh_app_setting_get $app domain)
+path_url=$(ynh_app_setting_get $app path)
+port=$(ynh_app_setting_get $app port)
+peer_port=$(ynh_app_setting_get $app peer_port)
 
-# Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app
-if [[ ! $? -eq 0 ]]; then
-    echo "There is already an app on this URL : $domain$path" | sudo tee /dev/stderr
-    exit 1
+#=================================================
+# CHECK IF THE APP CAN BE RESTORED
+#=================================================
+
+sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
+	|| ynh_die "Path not available: ${domain}${path_url}"
+
+#=================================================
+# STANDARD RESTORE STEPS
+#=================================================
+# RESTORE OF THE NGINX CONFIGURATION
+#=================================================
+
+ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
+# OPEN PORTS
+#=================================================
+
+ALL_QUIET sudo yunohost firewall allow --no-upnp TCP $port
+ALL_QUIET sudo yunohost firewall allow TCP $peer_port
+
+#=================================================
+# SPECIFIC RESTORE
+#=================================================
+# REINSTALL TRANSMISSION
+#=================================================
+
+ynh_package_install transmission-daemon
+
+#=================================================
+# RESTORE TRANSMISSION CONFIGURATION
+#=================================================
+
+# Transmission has to be stopped before modifying its config
+sudo systemctl stop transmission-daemon
+
+ynh_secure_remove /etc/transmission-daemon/settings.json
+ynh_restore_file /etc/transmission-daemon/settings.json
+
+#=================================================
+# RESTORE DATA
+#=================================================
+
+ynh_secure_remove /usr/share/transmission
+ynh_restore_file /usr/share/transmission
+
+ynh_secure_remove /var/lib/transmission-daemon
+ynh_restore_file /var/lib/transmission-daemon
+
+if [ -d "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission" ]	# Le dossier data est restauré seulement si il existe. Si le backup a été fait avec l'option backup_core_only, ce dossier n'a pas été sauvegardé.
+then
+	ynh_restore_file "/home/yunohost.transmission"
+else
+	sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
+	sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
+	sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
+	sudo chmod -R 640 /home/yunohost.transmission
+	sudo chmod -R 777 /home/yunohost.transmission/watched
 fi
+ynh_app_setting_delete $app backup_core_only # Retire l'option backup_core_only du fichier settings.yml le cas échéant
 
-sources_path=/usr/share/transmission
-# Do not check for empty source_path because 'apt-get remove' does not clean everything
-# if [ -d $sources_path ]; then
-#     echo "There is already a directory: $sources_path " | sudo tee /dev/stderr
-#     exit 1
-# fi
+#=================================================
+# YUNOHOST MULTIMEDIA INTEGRATION
+#=================================================
 
-data_path=/home/yunohost.transmission
-if [ -d $data_path ]; then
-    echo "There is already a directory: $data_path " | sudo tee /dev/stderr
-    exit 1
-fi
+ynh_multimedia_build_main_dir
+# Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
+ynh_multimedia_addfolder "/home/yunohost.transmission" "share/Torrents"
+# And share completed directory
+ynh_multimedia_addfolder "/home/yunohost.transmission/completed" "share/Torrents"
+# Share also watched directory, to allow to use it easily
+ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to download"
 
-nginx_conf=/etc/nginx/conf.d/$domain.d/$app.conf
-if [ -f $nginx_conf ]; then
-    echo "There is already a nginx conf file at this path: $nginx_conf " | sudo tee /dev/stderr
-    exit 1
-fi
+#=================================================
+# ENABLE SERVICE IN ADMIN PANEL
+#=================================================
 
-app_conf=/etc/transmission-daemon/settings.json
-# Do not check for empty app_conf because 'apt-get remove' does not clean everything
-# if [ -f $app_conf ]; then
-#     echo "There is already a PHP-FPM conf file at this path: $app_conf " | sudo tee /dev/stderr
-#     exit 1
-# fi
+sudo yunohost service add transmission-daemon --log "/var/log/syslog"
 
-# Open port in firewall
-sudo yunohost firewall allow TCP 51413 > /dev/null 2>&1
+#=================================================
+# START TRANSMISSION
+#=================================================
 
-# Install official debian package
-sudo apt-get install transmission-daemon -y -qq
+sudo systemctl start transmission-daemon
 
-# Make directories and set rights
-sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
-sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-sudo chown -R debian-transmission:debian-transmission /home/yunohost.transmission/progress /home/yunohost.transmission/watched
-sudo find /home/yunohost.transmission/ -type f | while read LINE; do sudo chmod 640 "$LINE" ; done
-sudo find /home/yunohost.transmission/ -type d | while read LINE; do sudo chmod 750 "$LINE" ; done
-sudo find /home/yunohost.transmission/watched -type d | while read LINE; do sudo chmod 770 "$LINE" ; done
+#=================================================
+# RELOAD NGINX
+#=================================================
 
-# Reload transmission service
-sudo service transmission-daemon reload
-
-# Monitor service
-sudo yunohost service add transmission-daemon
-
-# Restore sources & data
-sudo cp -a "./sources" $sources_path
-sudo cp -a "./data" $data_path
-
-# Restore conf files
-sudo cp -a "./conf/nginx.conf" $nginx_conf
-sudo cp -a "./conf/transmission.json" $app_conf
-
-# Reload Nginx
-sudo service nginx reload
+sudo systemctl reload nginx
