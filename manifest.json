@@ -2,18 +2,19 @@
 	"name": "Transmission",
 	"id": "transmission",
 	"packaging_format": 1,
-	"requirements": {
-		"yunohost": ">= 2.4.0"
-	},
 	"description": {
 		"en": "A Fast, Easy, and Free BitTorrent Client",
 		"fr": "Un client BitTorrent libre et rapide"
 	},
+	"version": "1.0",
 	"url": "https://www.transmissionbt.com/",
 	"license": " GPL-3.0",
 	"maintainer": {
 		"name": "Apps Group",
 		"email": "apps_group@yunohost.org"
+	},
+	"requirements": {
+		"yunohost": ">= 2.7.2"
 	},
 	"multi_instance": false,
 	"services": [

@@ -14,9 +14,9 @@ set -eu
 #=================================================
 
 if [ ! -e _common.sh ]; then
-	# Rapatrie le fichier de fonctions si il n'est pas dans le dossier courant
-	sudo cp ../settings/scripts/_common.sh ./_common.sh
-	sudo chmod a+rx _common.sh
+	# Get the _common.sh file if it's not in the current directory
+	cp ../settings/scripts/_common.sh ./_common.sh
+	chmod a+rx _common.sh
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
@@ -35,7 +35,7 @@ domain=$(ynh_app_setting_get $app domain)
 # BACKUP OF THE NGINX CONFIGURATION
 #=================================================
 
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${YNH_APP_BACKUP_DIR}/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # SPECIFIC BACKUP
@@ -43,23 +43,22 @@ ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${YNH_APP_BACKUP_DIR}/etc/ng
 # BACKUP TRANSMISSION CONFIGURATION
 #=================================================
 
-ynh_backup "/etc/transmission-daemon/settings.json" "${YNH_APP_BACKUP_DIR}/etc/transmission-daemon/settings.json"
+ynh_backup "/etc/transmission-daemon/settings.json"
 
 #=================================================
 # BACKUP DATA
 #=================================================
 
-CHECK_SIZE "/usr/share/transmission"
-ynh_backup "/usr/share/transmission" "${YNH_APP_BACKUP_DIR}/usr/share/transmission"
+ynh_backup "/usr/share/transmission"
 
-CHECK_SIZE "/var/lib/transmission-daemon"
-ynh_backup "/var/lib/transmission-daemon" "${YNH_APP_BACKUP_DIR}/var/lib/transmission-daemon"
+ynh_backup "/var/lib/transmission-daemon"
 
 backup_core_only=$(ynh_app_setting_get $app backup_core_only)
-if [ -z $backup_core_only ]	# Si backup_core_only a une valeur dans le fichier settings.yml, ne sauvegarde pas le dossier data
+# If backup_core_only have a value in settings.yml, do not backup the data directory
+if [ -z $backup_core_only ]
 then
 	CHECK_SIZE "/home/yunohost.transmission"
-	ynh_backup "/home/yunohost.transmission" "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission"
+	ynh_backup "/home/yunohost.transmission"
 else
 	echo "Data dir will not saved, because backup_core_only is set." >&2
 fi
