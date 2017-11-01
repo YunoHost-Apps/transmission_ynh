@@ -37,18 +37,20 @@ fi
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
 
-ynh_app_setting_set $app backup_core_only 1 # Indique au backup/restore de ne pas sauvegarder le dossier de data.
-BACKUP_BEFORE_UPGRADE	# Backup the current version of the app
+# Inform the backup/restore process that it should not save the data directory
+ynh_app_setting_set $app backup_core_only 1
+ynh_backup_before_upgrade	# Backup the current version of the app
 ynh_clean_setup () {
-	BACKUP_FAIL_UPGRADE	# restore it if the upgrade fails
+	ynh_restore_upgradebackup	# restore it if the upgrade fails
 }
-ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
+ynh_abort_if_errors	# Exit if an error occurs during the execution of the script
 
 #=================================================
 # CHECK THE PATH
 #=================================================
 
-path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du path.
+# Normalize the URL path syntax
+path_url=$(ynh_normalize_url_path $path_url)
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -59,7 +61,7 @@ path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du
 # Add a "/" at the end of path_url for next commands
 # To avoid a double / in the nginx config file.
 [ "$path_url" = "/" ] || path_url=${path_url}/
-ynh_nginx_config
+ynh_add_nginx_config
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -67,25 +69,25 @@ ynh_nginx_config
 # CREATE DIRECTORIES
 #=================================================
 
-sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
+mkdir -p /home/yunohost.transmission/{progress,completed,watched}
 
 #=================================================
 # SECURING FILES AND DIRECTORIES
 #=================================================
 
-sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
-sudo chmod -R 640 /home/yunohost.transmission
-sudo chmod -R 777 /home/yunohost.transmission/watched
+chown -R debian-transmission:www-data /home/yunohost.transmission/
+chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
+chmod -R 640 /home/yunohost.transmission
+chmod -R 777 /home/yunohost.transmission/watched
 
 #=================================================
 # CONFIGURE TRANSMISSION
 #=================================================
 
 # Transmission has to be stopped before modifying its config
-sudo systemctl stop transmission-daemon
+systemctl stop transmission-daemon
 
-# Créé un backup du fichier de config si il a été modifié.
+# Verify the checksum and backup the file if it's different
 ynh_backup_if_checksum_is_different /etc/transmission-daemon/settings.json
 
 # Create a RPC password
@@ -96,12 +98,13 @@ ynh_replace_string "__RPC_PASSWORD_TO_CHANGE__" "$rpcpassword" ../conf/settings.
 ynh_replace_string "__PATH__" "$path_url" ../conf/settings.json
 ynh_replace_string "__PEER_PORT__" "$peer_port" ../conf/settings.json
 ynh_replace_string "__PORT__" "$port" ../conf/settings.json
-sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
+cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
 #=================================================
 
+# Recalculate and store the config file checksum into the app settings
 ynh_store_file_checksum /etc/transmission-daemon/settings.json
 
 #=================================================
@@ -120,10 +123,10 @@ ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
 #=================================================
 
-sudo cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
+cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
 if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/web/style/transmission/common.css
 then
-	sudo bash -c 'cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
+    cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 fi
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
@@ -131,13 +134,13 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 # START TRANSMISSION
 #=================================================
 
-sudo systemctl start transmission-daemon
+systemctl start transmission-daemon
 
 #=================================================
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx
 
 #=================================================
 # REMOVE BACKUP_CORE_ONLY
