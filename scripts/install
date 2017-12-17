@@ -13,7 +13,8 @@ source /usr/share/yunohost/helpers
 # MANAGE FAILURE OF THE SCRIPT
 #=================================================
 
-ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
@@ -28,8 +29,13 @@ app=$YNH_APP_INSTANCE_NAME
 # CHECK IF THE APP CAN BE INSTALLED WITH THIS ARGS
 #=================================================
 
-path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du path.
-CHECK_DOMAINPATH	# Vérifie la disponibilité du path et du domaine.
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path $path_url)
+
+# Check web path availability
+ynh_webpath_available $domain $path_url
+# Register (book) web path
+ynh_webpath_register $app $domain $path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -44,14 +50,16 @@ ynh_app_setting_set $app path $path_url
 # FIND AND OPEN PORTS
 #=================================================
 
-port=$(ynh_find_port 9091)	# Cherche un port libre.
-# Ouvre le port dans le firewall
-ALL_QUIET sudo yunohost firewall allow --no-upnp TCP $port
+# Find a free port
+port=$(ynh_find_port 9091)
+# Open this port
+yunohost firewall allow --no-upnp TCP $port >/dev/null 2>&1
 ynh_app_setting_set $app port $port
 
-peer_port=$(ynh_find_port 51413)	# Cherche un port libre.
-# Ouvre le port dans le firewall
-ALL_QUIET sudo yunohost firewall allow TCP $peer_port
+# Find a free port
+peer_port=$(ynh_find_port 51413)
+# Open this port
+yunohost firewall allow TCP $peer_port >/dev/null 2>&1
 ynh_app_setting_set $app peer_port $peer_port
 
 #=================================================
@@ -67,7 +75,7 @@ ynh_package_install transmission-daemon
 # Add a "/" at the end of path_url for next commands
 # To avoid a double / in the nginx config file.
 [ "$path_url" = "/" ] || path_url=${path_url}/
-ynh_nginx_config
+ynh_add_nginx_config
 
 #=================================================
 # SPECIFIC SETUP
@@ -75,23 +83,23 @@ ynh_nginx_config
 # CREATE DIRECTORIES
 #=================================================
 
-sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
+mkdir -p /home/yunohost.transmission/{progress,completed,watched}
 
 #=================================================
 # SECURING FILES AND DIRECTORIES
 #=================================================
 
-sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
-sudo chmod -R 764 /home/yunohost.transmission
-sudo chmod -R 777 /home/yunohost.transmission/watched
+chown -R debian-transmission:www-data /home/yunohost.transmission/
+chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
+chmod -R 764 /home/yunohost.transmission
+chmod -R 777 /home/yunohost.transmission/watched
 
 #=================================================
 # CONFIGURE TRANSMISSION
 #=================================================
 
 # Transmission has to be stopped before modifying its config
-sudo systemctl stop transmission-daemon
+systemctl stop transmission-daemon
 
 # Create a RPC password
 rpcpassword=$(ynh_string_random)
@@ -101,7 +109,7 @@ ynh_replace_string "__RPC_PASSWORD_TO_CHANGE__" "$rpcpassword" ../conf/settings.
 ynh_replace_string "__PATH__" "$path_url" ../conf/settings.json
 ynh_replace_string "__PEER_PORT__" "$peer_port" ../conf/settings.json
 ynh_replace_string "__PORT__" "$port" ../conf/settings.json
-sudo cp ../conf/settings.json /etc/transmission-daemon/settings.json
+cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
@@ -125,8 +133,8 @@ ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
 #=================================================
 
-sudo cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
-sudo bash -c 'cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css'
+cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
+cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
@@ -135,16 +143,16 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 # ENABLE SERVICE IN ADMIN PANEL
 #=================================================
 
-sudo yunohost service add transmission-daemon --log "/var/log/syslog"
+yunohost service add transmission-daemon --log "/var/log/syslog"
 
 #=================================================
 # START TRANSMISSION
 #=================================================
 
-sudo systemctl start transmission-daemon
+systemctl start transmission-daemon
 
 #=================================================
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx

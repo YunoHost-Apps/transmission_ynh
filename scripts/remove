@@ -32,24 +32,34 @@ ynh_package_autoremove transmission-common
 # DISABLE SERVICE IN ADMIN PANEL
 #=================================================
 
-if sudo yunohost service status | grep -q transmission-daemon	# Test l'existence du service dans Yunohost
+if yunohost service status | grep -q transmission-daemon
 then
 	echo "Remove transmission-daemon service"
-	sudo yunohost service remove transmission-daemon
+	yunohost service remove transmission-daemon
 fi
 
 #=================================================
 # CLOSE THE PORTS
 #=================================================
 
-ALL_QUIET sudo yunohost firewall disallow TCP $port
-ALL_QUIET sudo yunohost firewall disallow TCP $peer_port
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port"
+	yunohost firewall disallow TCP $port 2>&1
+fi
+
+if yunohost firewall list | grep -q "\- $peer_port$"
+then
+	echo "Close port $peer_port"
+	yunohost firewall disallow TCP $peer_port 2>&1
+fi
 
 #=================================================
 # REMOVE THE NGINX CONFIGURATION
 #=================================================
 
-ynh_remove_nginx_config	# Suppression de la configuration nginx
+# Remove the dedicated nginx config
+ynh_remove_nginx_config
 
 #=================================================
 # SPECIFIC REMOVE
@@ -58,14 +68,15 @@ ynh_remove_nginx_config	# Suppression de la configuration nginx
 #=================================================
 
 backup_core_only=$(ynh_app_setting_get $app backup_core_only)
-if [ -z $backup_core_only ]	# Si backup_core_only a une valeur dans le fichier settings.yml, ne supprime pas le dossier data
+# If backup_core_only have a value in settings.yml, do not remove the data directory
+if [ -z $backup_core_only ]
 then
 	ynh_secure_remove /home/yunohost.transmission
 fi
 
 # And remove the link in yunohost.multimedia
-sudo rm "/home/yunohost.multimedia/share/Torrents"
-sudo rm "/home/yunohost.multimedia/share/Torrent to download"
+rm "/home/yunohost.multimedia/share/Torrents"
+rm "/home/yunohost.multimedia/share/Torrent to download"
 
 # Web interface
 ynh_secure_remove /usr/share/transmission

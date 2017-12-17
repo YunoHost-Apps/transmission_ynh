@@ -14,9 +14,9 @@ set -eu
 #=================================================
 
 if [ ! -e _common.sh ]; then
-	# Rapatrie le fichier de fonctions si il n'est pas dans le dossier courant
-	sudo cp ../settings/scripts/_common.sh ./_common.sh
-	sudo chmod a+rx _common.sh
+	# Get the _common.sh file if it's not in the current directory
+	cp ../settings/scripts/_common.sh ./_common.sh
+	chmod a+rx _common.sh
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
@@ -36,7 +36,7 @@ peer_port=$(ynh_app_setting_get $app peer_port)
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
 
-sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
+ynh_webpath_available $domain $path_url \
 	|| ynh_die "Path not available: ${domain}${path_url}"
 
 #=================================================
@@ -51,8 +51,8 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 # OPEN PORTS
 #=================================================
 
-ALL_QUIET sudo yunohost firewall allow --no-upnp TCP $port
-ALL_QUIET sudo yunohost firewall allow TCP $peer_port
+yunohost firewall allow --no-upnp TCP $port >/dev/null 2>&1
+yunohost firewall allow TCP $peer_port >/dev/null 2>&1
 
 #=================================================
 # SPECIFIC RESTORE
@@ -67,7 +67,7 @@ ynh_package_install transmission-daemon
 #=================================================
 
 # Transmission has to be stopped before modifying its config
-sudo systemctl stop transmission-daemon
+systemctl stop transmission-daemon
 
 ynh_secure_remove /etc/transmission-daemon/settings.json
 ynh_restore_file /etc/transmission-daemon/settings.json
@@ -82,17 +82,20 @@ ynh_restore_file /usr/share/transmission
 ynh_secure_remove /var/lib/transmission-daemon
 ynh_restore_file /var/lib/transmission-daemon
 
-if [ -d "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission" ]	# Le dossier data est restauré seulement si il existe. Si le backup a été fait avec l'option backup_core_only, ce dossier n'a pas été sauvegardé.
+# The data directory is restored only if it's in the backup.
+# If the backup have made with backup_core_only option, this directory didn't saved.
+if [ -d "${YNH_APP_BACKUP_DIR}/home/yunohost.transmission" ]
 then
 	ynh_restore_file "/home/yunohost.transmission"
 else
-	sudo mkdir -p /home/yunohost.transmission/{progress,completed,watched}
-	sudo chown -R debian-transmission:www-data /home/yunohost.transmission/
-	sudo chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
-	sudo chmod -R 640 /home/yunohost.transmission
-	sudo chmod -R 777 /home/yunohost.transmission/watched
+	mkdir -p /home/yunohost.transmission/{progress,completed,watched}
+	chown -R debian-transmission:www-data /home/yunohost.transmission/
+	chown -R debian-transmission: /home/yunohost.transmission/{progress,watched}
+	chmod -R 640 /home/yunohost.transmission
+	chmod -R 777 /home/yunohost.transmission/watched
 fi
-ynh_app_setting_delete $app backup_core_only # Retire l'option backup_core_only du fichier settings.yml le cas échéant
+# Remove the backup_core_only option from the settings.yml
+ynh_app_setting_delete $app backup_core_only
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
@@ -110,16 +113,16 @@ ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to
 # ENABLE SERVICE IN ADMIN PANEL
 #=================================================
 
-sudo yunohost service add transmission-daemon --log "/var/log/syslog"
+yunohost service add transmission-daemon --log "/var/log/syslog"
 
 #=================================================
 # START TRANSMISSION
 #=================================================
 
-sudo systemctl start transmission-daemon
+systemctl start transmission-daemon
 
 #=================================================
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx
