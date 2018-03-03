@@ -52,7 +52,7 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 
 yunohost firewall allow --no-upnp TCP $port >/dev/null 2>&1
-yunohost firewall allow TCP $peer_port >/dev/null 2>&1
+yunohost firewall allow Both $peer_port >/dev/null 2>&1
 
 #=================================================
 # SPECIFIC RESTORE
