@@ -25,8 +25,7 @@ peer_port=$(ynh_app_setting_get $app peer_port)
 # REMOVE TRANSMISSION-DAEMON
 #=================================================
 
-ynh_apt purge transmission-daemon
-ynh_package_autoremove transmission-common
+ynh_remove_app_dependencies
 
 #=================================================
 # DISABLE SERVICE IN ADMIN PANEL

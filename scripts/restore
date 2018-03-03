@@ -60,7 +60,7 @@ yunohost firewall allow TCP $peer_port >/dev/null 2>&1
 # REINSTALL TRANSMISSION
 #=================================================
 
-ynh_package_install transmission-daemon
+ynh_install_app_dependencies transmission-daemon acl
 
 #=================================================
 # RESTORE TRANSMISSION CONFIGURATION
