@@ -67,6 +67,12 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_add_nginx_config
 
 #=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies transmission-daemon acl
+
+#=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # CREATE DIRECTORIES
