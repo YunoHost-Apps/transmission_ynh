@@ -33,6 +33,9 @@ if [ -z $peer_port ]; then
 	ynh_app_setting_set $app peer_port $peer_port
 fi
 
+# Add peer_port also on UDP.
+yunohost firewall allow UDP $peer_port >/dev/null 2>&1
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -62,6 +65,12 @@ path_url=$(ynh_normalize_url_path $path_url)
 # To avoid a double / in the nginx config file.
 [ "$path_url" = "/" ] || path_url=${path_url}/
 ynh_add_nginx_config
+
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies transmission-daemon acl
 
 #=================================================
 # SPECIFIC UPGRADE

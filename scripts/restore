@@ -52,7 +52,7 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 
 yunohost firewall allow --no-upnp TCP $port >/dev/null 2>&1
-yunohost firewall allow TCP $peer_port >/dev/null 2>&1
+yunohost firewall allow Both $peer_port >/dev/null 2>&1
 
 #=================================================
 # SPECIFIC RESTORE
@@ -60,7 +60,7 @@ yunohost firewall allow TCP $peer_port >/dev/null 2>&1
 # REINSTALL TRANSMISSION
 #=================================================
 
-ynh_package_install transmission-daemon
+ynh_install_app_dependencies transmission-daemon acl
 
 #=================================================
 # RESTORE TRANSMISSION CONFIGURATION

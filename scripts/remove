@@ -25,8 +25,7 @@ peer_port=$(ynh_app_setting_get $app peer_port)
 # REMOVE TRANSMISSION-DAEMON
 #=================================================
 
-ynh_apt purge transmission-daemon
-ynh_package_autoremove transmission-common
+ynh_remove_app_dependencies
 
 #=================================================
 # DISABLE SERVICE IN ADMIN PANEL
@@ -51,7 +50,7 @@ fi
 if yunohost firewall list | grep -q "\- $peer_port$"
 then
 	echo "Close port $peer_port"
-	yunohost firewall disallow TCP $peer_port 2>&1
+	yunohost firewall disallow Both $peer_port 2>&1
 fi
 
 #=================================================

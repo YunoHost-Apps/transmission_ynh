@@ -59,14 +59,14 @@ ynh_app_setting_set $app port $port
 # Find a free port
 peer_port=$(ynh_find_port 51413)
 # Open this port
-yunohost firewall allow TCP $peer_port >/dev/null 2>&1
+yunohost firewall allow Both $peer_port >/dev/null 2>&1
 ynh_app_setting_set $app peer_port $peer_port
 
 #=================================================
 # INSTALL TRANSMISSION
 #=================================================
 
-ynh_package_install transmission-daemon
+ynh_install_app_dependencies transmission-daemon acl
 
 #=================================================
 # NGINX CONFIGURATION
