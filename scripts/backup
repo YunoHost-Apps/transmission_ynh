@@ -7,7 +7,7 @@
 #=================================================
 
 # Exit on command errors and treat unset variables as an error
-set -eu
+ynh_abort_if_errors
 
 #=================================================
 # IMPORT GENERIC HELPERS
