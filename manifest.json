@@ -8,7 +8,7 @@
 	},
 	"version": "1.0",
 	"url": "https://www.transmissionbt.com/",
-	"license": " GPL-3.0",
+	"license": "GPL-3.0",
 	"maintainer": {
 		"name": "Apps Group",
 		"email": "apps_group@yunohost.org"
