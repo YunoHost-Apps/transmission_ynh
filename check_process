@@ -11,7 +11,7 @@
 		setup_private=0
 		setup_public=0
 		upgrade=1
-		upgrade=1	from_commit=3e50bc865fbfd07640d6359aab6224dd1f626d8c
+		upgrade=1	from_commit=7d887f6bc1e29ce94de703517d5302580cbb8a7e
 		backup_restore=1
 		multi_instance=0
 		incorrect_path=1
@@ -34,6 +34,6 @@
 Email=
 Notification=down
 ;;; Upgrade options
-	; commit=3e50bc865fbfd07640d6359aab6224dd1f626d8c
-		name=Update of the scripts
+	; commit=7d887f6bc1e29ce94de703517d5302580cbb8a7e
+		name= Add acl dependency. Mar 3, 2018
 		manifest_arg=domain=DOMAIN&path=PATH&
