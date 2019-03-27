@@ -66,7 +66,7 @@ ynh_app_setting_set $app peer_port $peer_port
 # INSTALL TRANSMISSION
 #=================================================
 
-ynh_install_app_dependencies transmission-daemon acl
+ynh_install_app_dependencies transmission-daemon transmission-cli transmission-common acl
 
 # Fix a stupid issue which happens sometimes ...
 # transmission-common is installed (it's a dependency of
