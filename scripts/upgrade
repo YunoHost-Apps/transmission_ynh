@@ -70,7 +70,7 @@ ynh_add_nginx_config
 # INSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies transmission-daemon acl
+ynh_install_app_dependencies transmission-daemon transmission-cli transmission-common acl
 
 #=================================================
 # SPECIFIC UPGRADE

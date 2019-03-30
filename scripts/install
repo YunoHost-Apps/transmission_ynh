@@ -66,7 +66,18 @@ ynh_app_setting_set $app peer_port $peer_port
 # INSTALL TRANSMISSION
 #=================================================
 
-ynh_install_app_dependencies transmission-daemon acl
+ynh_install_app_dependencies transmission-daemon transmission-cli transmission-common acl
+
+# Fix a stupid issue which happens sometimes ...
+# transmission-common is installed (it's a dependency of
+# transmission-daemon) but somehow the files it's supposed
+# to add ain't there ... and possibly also the transmission user
+# is missing.
+# Explicitly reinstalling the package fixes the issue :|
+if [ ! -d /usr/share/transmission/ ]
+then
+   ynh_package_install transmission-common --reinstall
+fi
 
 #=================================================
 # NGINX CONFIGURATION
