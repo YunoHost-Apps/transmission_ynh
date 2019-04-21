@@ -56,6 +56,6 @@ ynh_backup "/var/lib/transmission-daemon"
 CHECK_SIZE "/home/yunohost.transmission"
 # The "--is big" parameter indicates that the file/directory requires "a lot of disk space"
 # It won't be backed up before 'upgrade' or while doing a 'backup' with:
-# "sudo BACKUP_CORE_ONLY=1 yunohost backup create --apps nextcloud"
+# "sudo BACKUP_CORE_ONLY=1 yunohost backup create --apps transmission"
 # See https://yunohost.org/#/backup
-ynh_backup "/home/yunohost.transmission" --is_big
+ynh_backup --src_path="/home/yunohost.transmission" --is_big

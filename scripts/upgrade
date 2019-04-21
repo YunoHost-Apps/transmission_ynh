@@ -156,7 +156,7 @@ systemctl reload nginx
 backup_core_only=$(ynh_app_setting_get $app backup_core_only)
 # If "backup_core_only" is still set in settings.yml, print a warning and run the upgrade as usual.
 # Setting is deleted at the end of the script to avoid side effect ("ynh_backup_before_upgrade" maybe).
-if [ -z $backup_core_only ]
+if [ "$backup_core_only" == "1" ]
 then
 	ynh_print_info --message="Setting 'backup_core_only' is deprecated and cannot be used anymore"
 	ynh_print_info --message="Modify your backup script accordingly or next backup will be huge. See https://github.com/YunoHost/doc/blob/master/backup.md#apps-specific-configuration"
