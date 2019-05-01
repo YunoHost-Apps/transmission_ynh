@@ -69,17 +69,6 @@ ynh_remove_nginx_config
 #=================================================
 # REMOVE DATA
 #=================================================
-
-backup_core_only=$(ynh_app_setting_get $app backup_core_only)
-# If backup_core_only have a value in settings.yml, do not remove the data directory
-if [ -z $backup_core_only ]
-then
-	ynh_secure_remove /home/yunohost.transmission
-fi
-
-# And remove the link in yunohost.multimedia
-rm "/home/yunohost.multimedia/share/Torrents"
-rm "/home/yunohost.multimedia/share/Torrent to download"
 ynh_script_progression --message="Removing transmission data..."
 
 # Web interface
