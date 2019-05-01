@@ -28,45 +28,47 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THIS ARGS
 #=================================================
+ynh_script_progression --message="Validating installation parameters..."
 
 # Normalize the url path syntax
 path_url=$(ynh_normalize_url_path $path_url)
 
-# Check web path availability
-ynh_webpath_available $domain $path_url
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=2
 
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN PORTS
 #=================================================
+ynh_script_progression --message="Configuring firewall..." --weight=16
 
 # Find a free port
-port=$(ynh_find_port 9091)
+port=$(ynh_find_port --port=9091)
 # Open this port
-yunohost firewall allow --no-upnp TCP $port >/dev/null 2>&1
-ynh_app_setting_set $app port $port
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 # Find a free port
-peer_port=$(ynh_find_port 51413)
+peer_port=$(ynh_find_port --port=51413)
 # Open this port
-yunohost firewall allow Both $peer_port >/dev/null 2>&1
-ynh_app_setting_set $app peer_port $peer_port
+ynh_exec_warn_less yunohost firewall allow Both $peer_port
+ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
 
 #=================================================
 # INSTALL TRANSMISSION
 #=================================================
+ynh_script_progression --message="Installing transmission..." --weight=16
 
-ynh_install_app_dependencies transmission-daemon transmission-cli transmission-common acl
+ynh_install_app_dependencies $pkg_dependencies
 
 # Fix a stupid issue which happens sometimes ...
 # transmission-common is installed (it's a dependency of
@@ -82,10 +84,9 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Configuring nginx web server..." --weight=2
 
-# Add a "/" at the end of path_url for next commands
-# To avoid a double / in the nginx config file.
-[ "$path_url" = "/" ] || path_url=${path_url}/
+# Create a dedicated nginx config
 ynh_add_nginx_config
 
 #=================================================
@@ -108,37 +109,40 @@ chmod -R 777 /home/yunohost.transmission/watched
 #=================================================
 # CONFIGURE TRANSMISSION
 #=================================================
+ynh_script_progression --message="Configuring transmission..." --weight=2
 
 # Transmission has to be stopped before modifying its config
-systemctl stop transmission-daemon
+ynh_systemd_action --service_name=transmission-daemon --action=stop
 
 # Create a RPC password
 rpcpassword=$(ynh_string_random)
-ynh_app_setting_set $app rpcpassword "$rpcpassword"
+ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
-ynh_replace_string "__RPC_PASSWORD_TO_CHANGE__" "$rpcpassword" ../conf/settings.json
-ynh_replace_string "__PATH__" "$path_url" ../conf/settings.json
-ynh_replace_string "__PEER_PORT__" "$peer_port" ../conf/settings.json
-ynh_replace_string "__PORT__" "$port" ../conf/settings.json
+
+ynh_replace_string --match_string="__RPC_PASSWORD_TO_CHANGE__" --replace_string="$rpcpassword" --target_file=../conf/settings.json
+ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/settings.json
+ynh_replace_string --match_string="__PEER_PORT__" --replace_string="$peer_port" --target_file=../conf/settings.json
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/settings.json
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
 #=================================================
 
-ynh_store_file_checksum /etc/transmission-daemon/settings.json
+ynh_store_file_checksum --file=/etc/transmission-daemon/settings.json
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
+ynh_script_progression --message="Adding multimedia directories..." --weight=4
 
 ynh_multimedia_build_main_dir
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-ynh_multimedia_addfolder "/home/yunohost.transmission" "share/Torrents"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission" --dest_dir="share/Torrents"
 # And share completed directory
-ynh_multimedia_addfolder "/home/yunohost.transmission/completed" "share/Torrents"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission/completed" --dest_dir="share/Torrents"
 # Share also watched directory, to allow to use it easily
-ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to download"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission/watched" --dest_dir="share/Torrent to download"
 
 #=================================================
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
@@ -149,21 +153,29 @@ cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/sty
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
+# START TRANSMISSION
+#=================================================
+ynh_script_progression --message="Starting transmission..."
+
+ynh_systemd_action --service_name=transmission-daemon --action=start
+
+#=================================================
 # GENERIC FINALISATION
 #=================================================
-# ENABLE SERVICE IN ADMIN PANEL
+# ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
 yunohost service add transmission-daemon --log "/var/log/syslog"
 
 #=================================================
-# START TRANSMISSION
-#=================================================
-
-systemctl start transmission-daemon
-
-#=================================================
 # RELOAD NGINX
 #=================================================
+ynh_script_progression --message="Reloading nginx web server..."
 
-systemctl reload nginx
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last

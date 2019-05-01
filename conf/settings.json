@@ -50,7 +50,7 @@
     "rpc-host-whitelist-enabled": false, 
     "rpc-password": "__RPC_PASSWORD_TO_CHANGE__", 
     "rpc-port": __PORT__, 
-    "rpc-url": "__PATH__transmission/", 
+    "rpc-url": "__PATH__/transmission/", 
     "rpc-username": "transmission", 
     "rpc-whitelist": "127.0.0.1", 
     "rpc-whitelist-enabled": false, 

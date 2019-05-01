@@ -12,28 +12,31 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..." 
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-port=$(ynh_app_setting_get $app port)
-peer_port=$(ynh_app_setting_get $app peer_port)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+port=$(ynh_app_setting_get --app=$app --key=port)
+peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
 
 #=================================================
 # STANDARD REMOVE
 #=================================================
 # REMOVE TRANSMISSION-DAEMON
 #=================================================
+ynh_script_progression --message="Removing transmission..." --weight=9
 
 ynh_remove_app_dependencies
 
 #=================================================
-# DISABLE SERVICE IN ADMIN PANEL
+# REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
-if yunohost service status | grep -q transmission-daemon
+# Remove a service from the admin panel, added by `yunohost service add`
+if yunohost service status transmission-daemon >/dev/null 2>&1
 then
-	echo "Remove transmission-daemon service"
+	ynh_script_progression --message="Removing $app service..." --weight=8
 	yunohost service remove transmission-daemon
 fi
 
@@ -43,19 +46,20 @@ fi
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	echo "Close port $port"
-	yunohost firewall disallow TCP $port 2>&1
+	ynh_script_progression --message="Closing port $port..."
+	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
 if yunohost firewall list | grep -q "\- $peer_port$"
 then
-	echo "Close port $peer_port"
-	yunohost firewall disallow Both $peer_port 2>&1
+	ynh_script_progression --message="Closing port $peer_port..."
+	ynh_exec_warn_less yunohost firewall disallow Both $peer_port
 fi
 
 #=================================================
 # REMOVE THE NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Removing nginx web server configuration..."
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
@@ -76,16 +80,25 @@ fi
 # And remove the link in yunohost.multimedia
 rm "/home/yunohost.multimedia/share/Torrents"
 rm "/home/yunohost.multimedia/share/Torrent to download"
+ynh_script_progression --message="Removing transmission data..."
 
 # Web interface
-ynh_secure_remove /usr/share/transmission
+ynh_secure_remove --file=/usr/share/transmission
 # And data
-ynh_secure_remove /var/lib/transmission-daemon
+ynh_secure_remove --file=/var/lib/transmission-daemon
 
 #=================================================
 # GENERIC FINALISATION
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
+ynh_script_progression --message="Removing the dedicated system user"
 
-ynh_system_user_delete debian-transmission
+# Delete a system user
+ynh_system_user_delete --username=debian-transmission
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Removal of $app completed" --last
