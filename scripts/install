@@ -120,7 +120,12 @@ ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
 
 ynh_replace_string --match_string="__RPC_PASSWORD_TO_CHANGE__" --replace_string="$rpcpassword" --target_file=../conf/settings.json
-ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/settings.json
+if [ "$path_url" != "/" ]
+then
+	ynh_replace_string --match_string="__PATH__" --replace_string="$path_url/" --target_file=../conf/settings.json
+else
+	ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/settings.json
+fi
 ynh_replace_string --match_string="__PEER_PORT__" --replace_string="$peer_port" --target_file=../conf/settings.json
 ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/settings.json
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
