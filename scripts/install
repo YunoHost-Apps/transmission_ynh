@@ -131,7 +131,7 @@ cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
 if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
-    sysctl --system
+    sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
 #=================================================
