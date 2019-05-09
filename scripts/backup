@@ -42,6 +42,7 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Backing up transmission configuration..."
 
 ynh_backup --src_path="/etc/transmission-daemon/settings.json"
+ynh_backup --src_path="/etc/sysctl.d/90-transmission.conf"
 
 #=================================================
 # BACKUP DATA

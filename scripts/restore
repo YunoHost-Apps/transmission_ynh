@@ -73,6 +73,9 @@ ynh_systemd_action --service_name=transmission-daemon --action=stop
 ynh_secure_remove --file=/etc/transmission-daemon/settings.json
 ynh_restore_file --origin_path=/etc/transmission-daemon/settings.json
 
+ynh_restore_file --src_path="/etc/sysctl.d/90-transmission.conf"
+sysctl --system
+
 #=================================================
 # RESTORE DATA
 #=================================================
