@@ -130,7 +130,9 @@ ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_f
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
-sysctl --system
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
+    sysctl --system
+fi
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
