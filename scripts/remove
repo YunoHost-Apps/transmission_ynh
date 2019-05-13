@@ -75,6 +75,11 @@ ynh_script_progression --message="Removing transmission data..."
 ynh_secure_remove --file=/usr/share/transmission
 # And data
 ynh_secure_remove --file=/var/lib/transmission-daemon
+# Kernel parameters
+ynh_secure_remove --file=/etc/sysctl.d/90-transmission.conf
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
+    sysctl --load=/etc/sysctl.d/90-transmission.conf
+fi
 
 #=================================================
 # GENERIC FINALISATION
