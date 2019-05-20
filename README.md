@@ -35,9 +35,9 @@ Transmission is a fast, easy, and free BitTorrent client.
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/transmission%20%28Official%29.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/transmission%20%28Official%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/transmission/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/transmission%20%28Official%29.svg)](https://ci-stretch.nohost.me/ci/apps/transmission/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/transmission%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/transmission%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/transmission/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/transmission%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/transmission/)
 
 ## Limitations
 
@@ -48,6 +48,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 
  * Report a bug: https://github.com/YunoHost-Apps/transmission_ynh/issues
  * Transmission website: https://transmissionbt.com/
+ * Transmission repository: https://github.com/transmission/transmission
  * YunoHost website: https://yunohost.org/
 
 ---
