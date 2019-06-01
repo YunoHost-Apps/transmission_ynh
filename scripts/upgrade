@@ -12,65 +12,84 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=2
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-port=$(ynh_app_setting_get $app port)
-peer_port=$(ynh_app_setting_get $app peer_port)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+port=$(ynh_app_setting_get --app=$app --key=port)
+peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
 
 #=================================================
-# FIX OLD THINGS
+# CHECK VERSION
 #=================================================
 
-if [ -z $port ]; then
+upgrade_type=$(ynh_check_app_version_changed)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
+
+if [ -z "$port" ]; then
 	port=9091
-	ynh_app_setting_set $app port $port
+	ynh_app_setting_set --app=$app --key=port --value=$port
+
 fi
-if [ -z $peer_port ]; then
+if [ -z "$peer_port" ]; then
 	peer_port=51413
-	ynh_app_setting_set $app peer_port $peer_port
+	ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
 fi
 
 # Add peer_port also on UDP.
-yunohost firewall allow UDP $peer_port >/dev/null 2>&1
+ynh_exec_warn_less yunohost firewall allow UDP $peer_port
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
 
 # Inform the backup/restore process that it should not save the data directory
+# Use only for the previous backup script that doesn't set 'is_big'
 ynh_app_setting_set $app backup_core_only 1
-ynh_backup_before_upgrade	# Backup the current version of the app
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+
+# Remove the option backup_core_only after the backup.
+ynh_app_setting_delete $app backup_core_only
+
 ynh_clean_setup () {
-	ynh_restore_upgradebackup	# restore it if the upgrade fails
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
 }
-ynh_abort_if_errors	# Exit if an error occurs during the execution of the script
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
 #=================================================
 # CHECK THE PATH
 #=================================================
 
 # Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path $path_url)
+path_url=$(ynh_normalize_url_path --path_url=$path_url)
 
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=2
 
-# Add a "/" at the end of path_url for next commands
-# To avoid a double / in the nginx config file.
-[ "$path_url" = "/" ] || path_url=${path_url}/
+# Create a dedicated nginx config
 ynh_add_nginx_config
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=7
 
-ynh_install_app_dependencies transmission-daemon transmission-cli transmission-common acl
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -92,41 +111,57 @@ chmod -R 777 /home/yunohost.transmission/watched
 #=================================================
 # CONFIGURE TRANSMISSION
 #=================================================
+ynh_script_progression --message="Reconfiguring transmission..." --weight=2
 
 # Transmission has to be stopped before modifying its config
-systemctl stop transmission-daemon
+ynh_systemd_action --service_name=transmission-daemon --action=stop
 
 # Verify the checksum and backup the file if it's different
-ynh_backup_if_checksum_is_different /etc/transmission-daemon/settings.json
+ynh_backup_if_checksum_is_different --file=/etc/transmission-daemon/settings.json
 
 # Create a RPC password
 rpcpassword=$(ynh_string_random)
-ynh_app_setting_set $app rpcpassword "$rpcpassword"
+ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
-ynh_replace_string "__RPC_PASSWORD_TO_CHANGE__" "$rpcpassword" ../conf/settings.json
-ynh_replace_string "__PATH__" "$path_url" ../conf/settings.json
-ynh_replace_string "__PEER_PORT__" "$peer_port" ../conf/settings.json
-ynh_replace_string "__PORT__" "$port" ../conf/settings.json
+ynh_replace_string --match_string="__RPC_PASSWORD_TO_CHANGE__" --replace_string="$rpcpassword" --target_file=../conf/settings.json
+if [ "$path_url" != "/" ]
+then
+	ynh_replace_string --match_string="__PATH__" --replace_string="$path_url/" --target_file=../conf/settings.json
+else
+	ynh_replace_string --match_string="__PATH__" --replace_string="$path_url" --target_file=../conf/settings.json
+fi
+ynh_replace_string --match_string="__PEER_PORT__" --replace_string="$peer_port" --target_file=../conf/settings.json
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/settings.json
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
+
+# Verify the checksum and backup the file if it's different
+ynh_backup_if_checksum_is_different --file=/etc/sysctl.d/90-transmission.conf
+
+cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
+    sysctl --load=/etc/sysctl.d/90-transmission.conf
+fi
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
 #=================================================
 
 # Recalculate and store the config file checksum into the app settings
-ynh_store_file_checksum /etc/transmission-daemon/settings.json
+ynh_store_file_checksum --file=/etc/transmission-daemon/settings.json
+ynh_store_file_checksum --file=/etc/sysctl.d/90-transmission.conf
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
+ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-ynh_multimedia_addfolder "/home/yunohost.transmission" "share/Torrents"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission" --dest_dir="share/Torrents"
 # And share completed directory
-ynh_multimedia_addfolder "/home/yunohost.transmission/completed" "share/Torrents"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission/completed" --dest_dir="share/Torrents"
 # Share also watched directory, to allow to use it easily
-ynh_multimedia_addfolder "/home/yunohost.transmission/watched" "share/Torrent to download"
+ynh_multimedia_addfolder --source_dir="/home/yunohost.transmission/watched" --dest_dir="share/Torrent to download"
 
 #=================================================
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
@@ -142,17 +177,21 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 # START TRANSMISSION
 #=================================================
+ynh_script_progression --message="Starting transmission..." --weight=2
 
-systemctl start transmission-daemon
+ynh_systemd_action --service_name=transmission-daemon --action=start
 
+#=================================================
+# GENERIC FINALISATION
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_script_progression --message="Reloading nginx web server..."
 
-systemctl reload nginx
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
-# REMOVE BACKUP_CORE_ONLY
+# END OF SCRIPT
 #=================================================
 
-ynh_app_setting_delete $app backup_core_only
+ynh_script_progression --message="Upgrade of $app completed" --last
