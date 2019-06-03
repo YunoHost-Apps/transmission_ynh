@@ -23,13 +23,6 @@ peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE TRANSMISSION-DAEMON
-#=================================================
-ynh_script_progression --message="Removing transmission..." --weight=9
-
-ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
@@ -39,6 +32,13 @@ then
 	ynh_script_progression --message="Removing $app service..." --weight=8
 	yunohost service remove transmission-daemon
 fi
+
+#=================================================
+# REMOVE TRANSMISSION-DAEMON
+#=================================================
+ynh_script_progression --message="Removing transmission..." --weight=9
+
+ynh_remove_app_dependencies
 
 #=================================================
 # CLOSE THE PORTS
