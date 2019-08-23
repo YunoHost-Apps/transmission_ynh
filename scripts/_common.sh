@@ -1,37 +1,62 @@
 #!/bin/bash
 
 #=================================================
-# YUNOHOST MULTIMEDIA INTEGRATION
+# COMMON VARIABLES
 #=================================================
 
+# dependencies used by the app
+pkg_dependencies="transmission-daemon transmission-cli transmission-common acl"
+
+#=================================================
+# PERSONAL HELPERS
+#=================================================
+
+#=================================================
+# EXPERIMENTAL HELPERS
+#=================================================
+
+#=================================================
+# FUTURE OFFICIAL HELPERS
+#=================================================
+
+# Install or update the main directory yunohost.multimedia
+#
+# usage: ynh_multimedia_build_main_dir
 ynh_multimedia_build_main_dir () {
-	wget -qq https://github.com/YunoHost-Apps/yunohost.multimedia/archive/master.zip
-	unzip -qq master.zip
-	./yunohost.multimedia-master/script/ynh_media_build.sh
+        local ynh_media_release="v1.2"
+        local checksum="806a827ba1902d6911095602a9221181"
+
+        # Download yunohost.multimedia scripts
+        wget -nv https://github.com/YunoHost-Apps/yunohost.multimedia/archive/${ynh_media_release}.tar.gz 
+
+        # Check the control sum
+        echo "${checksum} ${ynh_media_release}.tar.gz" | md5sum -c --status \
+                || ynh_die "Corrupt source"
+
+        # Check if the package acl is installed. Or install it.
+        ynh_package_is_installed 'acl' \
+                || ynh_package_install acl
+
+        # Extract
+        mkdir yunohost.multimedia-master
+        tar -xf ${ynh_media_release}.tar.gz -C yunohost.multimedia-master --strip-components 1
+        ./yunohost.multimedia-master/script/ynh_media_build.sh
 }
 
+# Add a directory in yunohost.multimedia
+# This "directory" will be a symbolic link to a existing directory.
+#
+# usage: ynh_multimedia_addfolder "Source directory" "Destination directory"
+#
+# | arg: -s, --source_dir= - Source directory - The real directory which contains your medias.
+# | arg: -d, --dest_dir= - Destination directory - The name and the place of the symbolic link, relative to "/home/yunohost.multimedia"
 ynh_multimedia_addfolder () {
-	./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="$1" --dest="$2"
-}
+	# Declare an array to define the options of this helper.
+	declare -Ar args_array=( [s]=source_dir= [d]=dest_dir= )
+	local source_dir
+	local dest_dir
+	# Manage arguments with getopts
+	ynh_handle_getopts_args "$@"
 
-#=================================================
-# BACKUP
-#=================================================
-
-HUMAN_SIZE () {	# Transforme une taille en Ko en une taille lisible pour un humain
-	human=$(numfmt --to=iec --from-unit=1K $1)
-	echo $human
-}
-
-CHECK_SIZE () {	# Vérifie avant chaque backup que l'espace est suffisant
-	file_to_analyse=$1
-	backup_size=$(du --summarize "$file_to_analyse" | cut -f1)
-	free_space=$(df --output=avail "/home/yunohost.backup" | sed 1d)
-
-	if [ $free_space -le $backup_size ]
-	then
-		echo "Espace insuffisant pour sauvegarder $file_to_analyse." >&2
-		echo "Espace disponible: $(HUMAN_SIZE $free_space)" >&2
-		ynh_die "Espace nécessaire: $(HUMAN_SIZE $backup_size)"
-	fi
+	./yunohost.multimedia-master/script/ynh_media_addfolder.sh --source="$source_dir" --dest="$dest_dir"
 }
