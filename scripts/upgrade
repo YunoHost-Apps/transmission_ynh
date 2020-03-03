@@ -134,11 +134,12 @@ ynh_replace_string --match_string="__PEER_PORT__" --replace_string="$peer_port" 
 ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/settings.json
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
-# Verify the checksum and backup the file if it's different
-ynh_backup_if_checksum_is_different --file=/etc/sysctl.d/90-transmission.conf
+if [ -e /proc/sys/net/core/rmem_max ]
+then
+    # Verify the checksum and backup the file if it's different
+    ynh_backup_if_checksum_is_different --file=/etc/sysctl.d/90-transmission.conf
 
-cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
-if [ -e /proc/sys/net/core/rmem_max ]; then
+    cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
     sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
@@ -148,7 +149,10 @@ fi
 
 # Recalculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file=/etc/transmission-daemon/settings.json
-ynh_store_file_checksum --file=/etc/sysctl.d/90-transmission.conf
+if [ -e /proc/sys/net/core/rmem_max ]
+then
+    ynh_store_file_checksum --file=/etc/sysctl.d/90-transmission.conf
+fi
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
