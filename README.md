@@ -42,7 +42,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 ## Limitations
 
 ## Additionnal informations
-```
+
 
 ## Links
 
