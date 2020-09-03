@@ -130,7 +130,7 @@ ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_f
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
 cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 0 ]; then
+if [ -e /proc/sys/net/core/rmem_max ]; then
     sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
