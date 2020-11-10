@@ -1,4 +1,4 @@
-# Transmission app for YunoHost
+# Transmission for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)  
 [![Install Transmission with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=transmission)
@@ -35,14 +35,28 @@ Transmission is a fast, easy, and free BitTorrent client.
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/transmission%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/transmission%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/transmission%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/transmission/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/transmission%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/transmission/)
 
 ## Limitations
 
 ## Additionnal informations
+Alternative to WebUI :
 
+You can use remote client on different platforms to manage your Transmission server:
+
+* Dekstop: Transmission-remote-GUI: https://github.com/transmission-remote-gui/transgui
+* Mobile: Transdroid: http://www.transdroid.org/
+* More clients here: https://transmissionbt.com/resources/
+
+You can use the following information to connect your server:
+
+* Remote host: Your domain or IP address (don't add folder)
+* Port: 443
+* SSL: Enabled
+* User: Your Yunohost Username
+* Password: Password of the Yunohost User above
+* RPC Path: /torrent/transmission/rpc (if you used the standard folder)
 
 ## Links
 
@@ -53,8 +67,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 
 ---
 
-Developers infos
-----------------
+## Developers infos
 
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/transmission_ynh/tree/testing).
 

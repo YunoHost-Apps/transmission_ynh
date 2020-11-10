@@ -129,8 +129,9 @@ ynh_replace_string --match_string="__PEER_PORT__" --replace_string="$peer_port" 
 ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file=../conf/settings.json
 cp ../conf/settings.json /etc/transmission-daemon/settings.json
 
-cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
-if [ -e /proc/sys/net/core/rmem_max ]; then
+if [ -e /proc/sys/net/core/rmem_max ]
+then
+    cp ../conf/90-transmission.conf /etc/sysctl.d/90-transmission.conf
     sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
@@ -139,7 +140,10 @@ fi
 #=================================================
 
 ynh_store_file_checksum --file=/etc/transmission-daemon/settings.json
-ynh_store_file_checksum --file=/etc/sysctl.d/90-transmission.conf
+if [ -e /proc/sys/net/core/rmem_max ]
+then
+    ynh_store_file_checksum --file=/etc/sysctl.d/90-transmission.conf
+fi
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
