@@ -54,7 +54,7 @@ Vous pouvez utiliser les informations suivantes pour vous connecter à votre ser
 * SSL : Activé
 * Utilisateur : Votre nom d'utilisateur YunoHost
 * Mot de passe : Le mot de passe de l'utilisateur YunoHost utilisé
-* Répertoire RPC: /torrent/transmission/rpc (si vous utilisez le répertoire par défaut)
+* Répertoire RPC : `/torrent/transmission/rpc` (si vous utilisez le répertoire par défaut)
 
 ## Liens
  * Signaler un bug : https://github.com/YunoHost-Apps/transmission_ynh/issues
