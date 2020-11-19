@@ -64,7 +64,7 @@ Vous pouvez utiliser les informations suivantes pour vous connecter à votre ser
 
 ---
 
-Informations pour les développeurs
+## Informations pour les développeurs
 
 
 Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/transmission_ynh/tree/testing).
