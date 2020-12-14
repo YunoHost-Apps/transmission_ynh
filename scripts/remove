@@ -59,9 +59,9 @@ fi
 #=================================================
 # REMOVE THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing nginx web server configuration..."
+ynh_script_progression --message="Removing NGINX web server configuration..."
 
-# Remove the dedicated nginx config
+# Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
 #=================================================

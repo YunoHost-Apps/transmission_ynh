@@ -57,7 +57,7 @@ ynh_exec_warn_less yunohost firewall allow Both $peer_port
 #=================================================
 # REINSTALL TRANSMISSION
 #=================================================
-ynh_script_progression --message="Reinstalling transmission..." --weight=16
+ynh_script_progression --message="Reinstalling Transmission..." --weight=16
 
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
@@ -65,7 +65,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # RESTORE TRANSMISSION CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring transmission configuration..." --weight=2
+ynh_script_progression --message="Restoring Transmission configuration..." --weight=2
 
 # Transmission has to be stopped before modifying its config
 ynh_systemd_action --service_name=transmission-daemon --action=stop
@@ -127,14 +127,14 @@ ynh_systemd_action --service_name=transmission-daemon --action=start
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add transmission-daemon --log "/var/log/syslog"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --weight=2
+ynh_script_progression --message="Reloading NGINX web server..." --weight=2
 
 ynh_systemd_action --service_name=nginx --action=reload
 

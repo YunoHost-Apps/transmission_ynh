@@ -68,20 +68,13 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path --path_url=$path_url)
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --weight=2
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=2
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -111,7 +104,7 @@ chmod -R 777 /home/yunohost.transmission/watched
 #=================================================
 # CONFIGURE TRANSMISSION
 #=================================================
-ynh_script_progression --message="Reconfiguring transmission..." --weight=2
+ynh_script_progression --message="Reconfiguring Transmission..." --weight=2
 
 # Transmission has to be stopped before modifying its config
 ynh_systemd_action --service_name=transmission-daemon --action=stop
@@ -179,9 +172,15 @@ fi
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog"
+
+#=================================================
 # START TRANSMISSION
 #=================================================
-ynh_script_progression --message="Starting transmission..." --weight=2
+ynh_script_progression --message="Starting Transmission..." --weight=2
 
 ynh_systemd_action --service_name=transmission-daemon --action=start
 
@@ -190,7 +189,7 @@ ynh_systemd_action --service_name=transmission-daemon --action=start
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 

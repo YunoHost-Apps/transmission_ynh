@@ -12,7 +12,7 @@ Si vous n'avez pas YunoHost, consultez [le guide](https://yunohost.org/#/install
 
 Transmission est un client BitTorrent libre, efficace et simple.
 
-**Version incluse :** La version du dépôt de Debian.
+**Version incluse :** 2.94-2 (La version du dépôt de Debian)
 
 ## Captures d'écran
 ![](transmission.jpg)
@@ -64,7 +64,6 @@ Vous pouvez utiliser les informations suivantes pour vous connecter à votre ser
 ---
 
 ## Informations pour les développeurs
-
 
 Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/transmission_ynh/tree/testing).
 

@@ -12,7 +12,7 @@ If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to
 
 Transmission is a fast, easy, and free BitTorrent client.
 
-**Shipped version:** Debian repository version.
+**Shipped version:** 2.94-2 (Debian repository version)
 
 ## Screenshots
 ![](transmission.jpg)
