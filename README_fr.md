@@ -1,7 +1,7 @@
 # Transmission pour YunoHost
 
 [![Niveau d'intégration](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)  
-[![Installer Transmission avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=transmission)
+[![Installer Transmission avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
 *[Read this readme in english.](./README.md)* 
 
