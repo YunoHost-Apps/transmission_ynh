@@ -19,18 +19,20 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 
 #=================================================
-# STANDARD BACKUP STEPS
+# DECLARE DATA AND CONF FILES TO BACKUP
+#=================================================
+ynh_print_info --message="Declaring files to be backed up..."
+
 #=================================================
 # BACKUP OF THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Backing up nginx web server configuration..."
 
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -39,7 +41,6 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # BACKUP TRANSMISSION CONFIGURATION
 #=================================================
-ynh_script_progression --message="Backing up transmission configuration..."
 
 ynh_backup --src_path="/etc/transmission-daemon/settings.json"
 if [ -e /proc/sys/net/core/rmem_max ]
@@ -50,7 +51,6 @@ fi
 #=================================================
 # BACKUP DATA
 #=================================================
-ynh_script_progression --message="Backing up transmission data..."
 
 ynh_backup --src_path="/usr/share/transmission"
 ynh_backup --src_path="/var/lib/transmission-daemon"
@@ -61,4 +61,4 @@ ynh_backup --src_path="/home/yunohost.transmission" --is_big
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last
+ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
