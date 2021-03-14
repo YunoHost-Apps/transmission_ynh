@@ -10,8 +10,8 @@
 	"url": "https://www.transmissionbt.com/",
 	"license": "GPL-3.0",
 	"maintainer": {
-        	"name": "YunoHost Contributors",
-        	"email": "apps@yunohost.org"
+        	"name": "",
+        	"email": ""
 	},
     "requirements": {
         "yunohost": ">= 3.8.1"
