@@ -72,10 +72,10 @@ ynh_install_app_dependencies $pkg_dependencies
 # transmission-daemon) but somehow the files it's supposed
 # to add ain't there ... and possibly also the transmission user
 # is missing.
-# Explicitly reinstalling the package fixes the issue :|
+# Explicitly reinstalling the packages fixes the issue :|
 if [ ! -d /usr/share/transmission/ ]
 then
-   ynh_install_app_dependencies transmission-common --reinstall
+   ynh_package_install $pkg_dependencies --reinstall
 fi
 
 #=================================================
