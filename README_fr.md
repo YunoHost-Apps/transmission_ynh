@@ -22,7 +22,7 @@ Transmission est un client BitTorrent libre, efficace et simple.
 ## Documentation
 
  * Documentation officielle : https://github.com/transmission/transmission/wiki
- * Documentation YunoHost : https://yunohost.org/#/app_transmission
+ * Documentation YunoHost : https://yunohost.org/fr/app_transmission
 
 ## Caractéristiques spécifiques YunoHost
 
