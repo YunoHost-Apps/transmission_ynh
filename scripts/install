@@ -46,7 +46,7 @@ ynh_app_setting_set --app=$app --key=path --value=$path_url
 #=================================================
 # FIND AND OPEN PORTS
 #=================================================
-ynh_script_progression --message="Configuring firewall..." --weight=16
+ynh_script_progression --message="Finding an available port..." --weight=16
 
 # Find a free port
 port=$(ynh_find_port --port=9091)
@@ -75,7 +75,7 @@ ynh_install_app_dependencies $pkg_dependencies
 # Explicitly reinstalling the packages fixes the issue :|
 if [ ! -d /usr/share/transmission/ ]
 then
-   ynh_package_install $pkg_dependencies --reinstall
+   ynh_install_app_dependencies $pkg_dependencies --reinstall
 fi
 
 #=================================================
@@ -176,7 +176,7 @@ ynh_systemd_action --service_name=transmission-daemon --action=start
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog" --needs_exposed_ports="$peer_port"
 
 #=================================================
 # RELOAD NGINX
