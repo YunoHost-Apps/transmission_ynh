@@ -102,7 +102,7 @@ mkdir -p $datadir/{progress,completed,watched}
 chown -R debian-transmission:www-data $datadir
 chown -R debian-transmission: $datadir/{progress,watched}
 chmod -R 640 $datadir
-chmod -R 777 $datadir/watched
+chmod -R 770 $datadir/watched
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
