@@ -19,6 +19,7 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 port=$(ynh_app_setting_get --app=$app --key=port)
 peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # STANDARD REMOVE
@@ -39,6 +40,17 @@ fi
 ynh_script_progression --message="Removing transmission..." --weight=9
 
 ynh_remove_app_dependencies
+
+#=================================================
+# REMOVE DATA DIR
+#=================================================
+
+# Remove the app data directory with the command `yunohost app remove --purge`
+if [ "$YNH_APP_PURGE" == true ]
+then
+  ynh_script_progression --message="Removing $app data directory..." --weight=2
+  ynh_secure_remove --file="$datadir"
+fi
 
 #=================================================
 # CLOSE THE PORTS
