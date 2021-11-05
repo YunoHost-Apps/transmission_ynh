@@ -11,11 +11,11 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ## Vue d'ensemble
 
-Un client BitTorrent libre et rapide
+Client BitTorrent libre et rapide
 
 **Version incluse :** 2.94-2~ynh1
 
-**Démo :** https://demo.example.com
+
 
 ## Captures d'écran
 
@@ -44,7 +44,6 @@ Vous pouvez utiliser les informations suivantes pour vous connecter à votre ser
 ## Documentations et ressources
 
 * Site officiel de l'app : https://www.transmissionbt.com/
-* Documentation officielle utilisateur : https://yunohost.org/en/app_transmission
 * Documentation officielle de l'admin : https://github.com/transmission/transmission/wiki
 * Dépôt de code officiel de l'app : https://github.com/transmission/transmission
 * Documentation YunoHost pour cette app : https://yunohost.org/app_transmission
