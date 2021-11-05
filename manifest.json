@@ -3,17 +3,15 @@
 	"id": "transmission",
 	"packaging_format": 1,
 	"description": {
-		"en": "A Fast, Easy, and Free BitTorrent Client",
-		"fr": "Un client BitTorrent libre et rapide"
+		"en": "Fast, Easy, and Free BitTorrent Client",
+		"fr": "Client BitTorrent libre et rapide"
 	},
 	"version": "2.94-2~ynh1",
 	"url": "https://www.transmissionbt.com/",
 	"upstream": {
         "license": "GPL-3.0",
         "website": "https://www.transmissionbt.com/",
-        "demo": "https://demo.example.com",
         "admindoc": "https://github.com/transmission/transmission/wiki",
-        "userdoc": "https://yunohost.org/en/app_transmission",
         "code": "https://github.com/transmission/transmission"
     },
 	"license": "GPL-3.0",
