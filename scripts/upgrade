@@ -49,7 +49,7 @@ ynh_exec_warn_less yunohost firewall allow UDP $peer_port
 if [ -z "$datadir" ]; then
 	datadir=/home/yunohost.app/$app
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-	cp -a "/home/yunohost.transmission" "$datadir"
+	mv "/home/yunohost.transmission" "$datadir"
 fi
 
 #=================================================
