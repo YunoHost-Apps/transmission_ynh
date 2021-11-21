@@ -97,7 +97,6 @@ ynh_install_app_dependencies $pkg_dependencies
 # CREATE DIRECTORIES
 #=================================================
 
-datadir=/home/yunohost.app/$app
 
 mkdir -p $datadir/{progress,completed,watched}
 
