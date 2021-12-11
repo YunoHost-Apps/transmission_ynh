@@ -15,9 +15,9 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Fast, Easy, and Free BitTorrent Client
+Transmission is a set of lightweight BitTorrent clients (in GUI, CLI and daemon form). All its incarnations feature a very simple, intuitive interface on top on an efficient, cross-platform back-end. 
 
-**Shipped version:** 2.94-2~ynh1
+**Shipped version:** 3.00.1~ynh1
 
 
 
@@ -28,6 +28,7 @@ Fast, Easy, and Free BitTorrent Client
 ## Disclaimers / important information
 
 ## Additionnal informations
+
 Alternative to WebUI :
 
 You can use remote client on different platforms to manage your Transmission server:
