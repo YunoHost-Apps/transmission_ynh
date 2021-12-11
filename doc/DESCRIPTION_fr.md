@@ -1,0 +1,1 @@
+Transmission est un ensemble de clients légers BitTorrent (interface graphique, console et démon). Toutes ces incarnations se veulent simples, avec des interfaces intuitives et un moteur multiplate-forme efficace. 
