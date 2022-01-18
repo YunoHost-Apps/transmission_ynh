@@ -58,20 +58,20 @@ fi
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	ynh_script_progression --message="Closing port $port..."
+	ynh_script_progression --message="Closing port $port..." --weight=1
 	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
 if yunohost firewall list | grep -q "\- $peer_port$"
 then
-	ynh_script_progression --message="Closing port $peer_port..."
+	ynh_script_progression --message="Closing port $peer_port..." --weight=1
 	ynh_exec_warn_less yunohost firewall disallow Both $peer_port
 fi
 
 #=================================================
 # REMOVE THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..."
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=2
 
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
@@ -81,7 +81,7 @@ ynh_remove_nginx_config
 #=================================================
 # REMOVE DATA
 #=================================================
-ynh_script_progression --message="Removing transmission data..."
+ynh_script_progression --message="Removing transmission data..." --weight=2
 
 # Web interface
 ynh_secure_remove --file=/usr/share/transmission
@@ -99,7 +99,7 @@ fi
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Removing the dedicated system user"
+ynh_script_progression --message="Removing the dedicated system user" --weight=1
 
 # Delete a system user
 ynh_system_user_delete --username=debian-transmission

@@ -166,7 +166,7 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 # START TRANSMISSION
 #=================================================
-ynh_script_progression --message="Starting Transmission..."
+ynh_script_progression --message="Starting Transmission..." --weight=1
 
 ynh_systemd_action --service_name=transmission-daemon --action=start
 
@@ -175,6 +175,7 @@ ynh_systemd_action --service_name=transmission-daemon --action=start
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog" --needs_exposed_ports="$peer_port"
 

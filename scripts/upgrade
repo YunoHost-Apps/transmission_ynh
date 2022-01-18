@@ -177,6 +177,7 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog" --needs_exposed_ports="$peer_port"
 
