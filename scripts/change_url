@@ -107,7 +107,11 @@ fi
 # UPDATE TRANSMISSION CONFIGURATION
 #=================================================
 
+ynh_backup_if_checksum_is_different --file="/etc/transmission-daemon/settings.json"
+
 ynh_replace_string --match_string="rpc-url\": \"${old_path%/}/transmission/" --replace_string="rpc-url\": \"${new_path%/}/transmission/" --target_file="/etc/transmission-daemon/settings.json"
+
+ynh_store_file_checksum --file="/etc/transmission-daemon/settings.json"
 
 #=================================================
 # GENERIC FINALISATION

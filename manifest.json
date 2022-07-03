@@ -1,39 +1,44 @@
 {
-	"name": "Transmission",
-	"id": "transmission",
-	"packaging_format": 1,
-	"description": {
-		"en": "A Fast, Easy, and Free BitTorrent Client",
-		"fr": "Un client BitTorrent libre et rapide"
-	},
-	"version": "1.0~ynh4",
-	"url": "https://www.transmissionbt.com/",
-	"license": "GPL-3.0",
-	"maintainer": {
-        	"name": "",
-        	"email": ""
-	},
-    "requirements": {
-        "yunohost": ">= 4.1.7"
+    "name": "Transmission",
+    "id": "transmission",
+    "packaging_format": 1,
+    "description": {
+        "en": "A Fast, Easy, and Free BitTorrent Client",
+        "fr": "Un client BitTorrent libre et rapide"
     },
-	"multi_instance": false,
-	"services": [
-		"nginx",
-		"transmission-daemon"
-	],
-	"arguments": {
-		"install": [
-			{
-				"name": "domain",
-				"type": "domain",
-				"example": "domain.org"
-			},
-			{
-				"name": "path",
-				"type": "path",
-				"example": "/transmission",
-				"default": "/transmission"
-			}
-		]
-	}
+    "version": "2.94~ynh1",
+    "url": "https://www.transmissionbt.com",
+    "upstream": {
+        "license": "GPL-3.0",
+        "website": "https://www.transmissionbt.com",
+        "admindoc": "https://github.com/transmission/transmission/wiki",
+        "code": "https://github.com/transmission/transmission"
+    },
+    "license": "GPL-3.0",
+    "maintainer": {
+        "name": "",
+        "email": ""
+    },
+    "requirements": {
+        "yunohost": ">= 4.3.0"
+    },
+    "multi_instance": false,
+    "services": [
+        "nginx",
+        "transmission-daemon"
+    ],
+    "arguments": {
+        "install": [
+            {
+                "name": "domain",
+                "type": "domain"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "example": "/transmission",
+                "default": "/transmission"
+            }
+        ]
+    }
 }
