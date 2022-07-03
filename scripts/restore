@@ -39,7 +39,15 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 ynh_script_progression --message="Validating restoration parameters..."
 
 #=================================================
-# STANDARD RESTORATION STEPS
+# SPECIFIC RESTORATION
+#=================================================
+# REINSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Reinstalling dependencies..." --weight=16
+
+# Define and install dependencies
+ynh_install_app_dependencies $pkg_dependencies
+
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
@@ -53,16 +61,6 @@ chmod -R 764 $datadir
 chmod -R 777 $datadir/watched
 chown -R debian-transmission:www-data "$datadir"
 chown -R debian-transmission: $datadir/{progress,watched}
-
-#=================================================
-# SPECIFIC RESTORATION
-#=================================================
-# REINSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Reinstalling dependencies..." --weight=16
-
-# Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
