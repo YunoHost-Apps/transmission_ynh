@@ -28,16 +28,20 @@ ynh_script_progression --message="Loading installation settings..."
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+
+# Add settings here as needed by your application
 port=$(ynh_app_setting_get --app=$app --key=port)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+# BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
 #=================================================
 ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
 	# Remove the new domain config file, the remove script won't do it as it doesn't know yet its location.
 	ynh_secure_remove --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 
@@ -68,9 +72,9 @@ fi
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping Transmission..." --weight=2
+ynh_script_progression --message="Stopping a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=transmission-daemon --action=stop
+ynh_systemd_action --service_name=transmission-daemon --action="stop"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -118,9 +122,9 @@ ynh_store_file_checksum --file="/etc/transmission-daemon/settings.json"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting transmission..." --weight=2
+ynh_script_progression --message="Starting a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=transmission-daemon --action=start
+ynh_systemd_action --service_name=transmission-daemon --action="start"
 
 #=================================================
 # RELOAD NGINX
