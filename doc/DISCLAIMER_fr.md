@@ -1,21 +1,21 @@
-## Caractéristiques spécifiques YunoHost
+## CaractÃ©ristiques spÃ©cifiques YunoHost
 
- * Intégration avec les répertoires Multimédias de YunoHost
+ * IntÃ©gration avec les rÃ©pertoires MultimÃ©dias de YunoHost
 
 ## Informations additionnelles
-Alternative à WebUI :
+Alternative Ã  WebUI :
 
-Vous pouvez utiliser le client de contrôle à distance des différentes plateformes pour gérer votre serveur Transmission :
+Vous pouvez utiliser le client de contrÃ´le Ã  distance des diffÃ©rentes plateformes pour gÃ©rer votre serveur Transmission :
 
 * Bureau : Transmission-remote-GUI : https://github.com/transmission-remote-gui/transgui
 * Mobile : Transdroid : http://www.transdroid.org/
 * Plus de clients ici : https://transmissionbt.com/resources/
 
-Vous pouvez utiliser les informations suivantes pour vous connecter à votre serveur :
+Vous pouvez utiliser les informations suivantes pour vous connecter Ã  votre serveur :
 
-* Hôte distant : Votre domaine ou adresse IP (n'ajoutez pas le répertoire)
+* HÃ´te distant : Votre domaine ou adresse IP (n'ajoutez pas le rÃ©pertoire)
 * Port : 443
-* SSL : Activé
+* SSL : ActivÃ©
 * Utilisateur : Votre nom d'utilisateur YunoHost
-* Mot de passe : Le mot de passe de l'utilisateur YunoHost utilisé
-* Répertoire RPC : `/torrent/transmission/rpc` (si vous utilisez le répertoire par défaut)
+* Mot de passe : Le mot de passe de l'utilisateur YunoHost utilisÃ©
+* RÃ©pertoire RPC : `/torrent/transmission/rpc` (si vous utilisez le rÃ©pertoire par dÃ©faut)
