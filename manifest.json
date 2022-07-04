@@ -36,8 +36,8 @@
             {
                 "name": "path",
                 "type": "path",
-                "example": "/transmission",
-                "default": "/transmission"
+                "example": "/torrent",
+                "default": "/torrent"
             }
         ]
     }
