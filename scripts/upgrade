@@ -74,13 +74,8 @@ ynh_exec_warn_less yunohost firewall allow UDP $peer_port
 
 # If datadir doesn't exist, create it
 if [ -z "$datadir" ]; then
-	datadir=/home/yunohost.app/$app
+	datadir=/home/yunohost.transmission
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-	mkdir -p $datadir
-	mv /home/yunohost.transmission/progress $datadir/progress
-	mv /home/yunohost.transmission/completed $datadir/completed
-	mv /home/yunohost.transmission/watched $datadir/watched
-	ynh_secure_remove --file="/home/yunohost.transmission/"
 fi
 
 #=================================================
@@ -173,14 +168,14 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog" --needs_exposed_ports="$peer_port"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$peer_port"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=transmission-daemon --action=start
+ynh_systemd_action --service_name=transmission-daemon --action="start"
 
 #=================================================
 # RELOAD NGINX

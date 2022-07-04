@@ -118,7 +118,7 @@ ynh_multimedia_addfolder --source_dir="$datadir/watched" --dest_dir="share/Torre
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/syslog" --needs_exposed_ports="$peer_port"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$peer_port"
 
 #=================================================
 # START SYSTEMD SERVICE
