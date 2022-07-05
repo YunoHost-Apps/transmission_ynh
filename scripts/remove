@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC STARTING
+# GENERIC START
 #=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
@@ -12,36 +12,46 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." 
+ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 port=$(ynh_app_setting_get --app=$app --key=port)
 peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE SERVICE FROM ADMIN PANEL
+# REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-# Remove a service from the admin panel, added by `yunohost service add`
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
 if yunohost service status transmission-daemon >/dev/null 2>&1
 then
-	ynh_script_progression --message="Removing $app service..." --weight=8
+	ynh_script_progression --message="Removing $app service integration..." --weight=8
 	yunohost service remove transmission-daemon
 fi
 
 #=================================================
-# REMOVE TRANSMISSION-DAEMON
+# REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing transmission..." --weight=9
+ynh_script_progression --message="Removing NGINX web server configuration..."
 
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..." --weight=9
+
+# Remove metapackage and its dependencies
 ynh_remove_app_dependencies
 
 #=================================================
-# CLOSE THE PORTS
+# CLOSE A PORT
 #=================================================
 
 if yunohost firewall list | grep -q "\- $port$"
@@ -57,19 +67,11 @@ then
 fi
 
 #=================================================
-# REMOVE THE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..."
-
-# Remove the dedicated NGINX config
-ynh_remove_nginx_config
-
-#=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE DATA
+# REMOVE VARIOUS FILES
 #=================================================
-ynh_script_progression --message="Removing transmission data..."
+ynh_script_progression --message="Removing various files..."
 
 # Web interface
 ynh_secure_remove --file=/usr/share/transmission
@@ -78,16 +80,16 @@ ynh_secure_remove --file=/var/lib/transmission-daemon
 # Kernel parameters
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-    ynh_secure_remove --file=/etc/sysctl.d/90-transmission.conf
-    sysctl --load=/etc/sysctl.d/90-transmission.conf
+	ynh_secure_remove --file=/etc/sysctl.d/90-transmission.conf
+	sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
 #=================================================
-# GENERIC FINALISATION
+# GENERIC FINALIZATION
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Removing the dedicated system user"
+ynh_script_progression --message="Removing the dedicated system user..."
 
 # Delete a system user
 ynh_system_user_delete --username=debian-transmission
