@@ -20,6 +20,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 
 **Shipped version:** 2.94~ynh1
 
+
 ## Screenshots
 
 ![Screenshot of Transmission](./doc/screenshots/transmission.jpg)
