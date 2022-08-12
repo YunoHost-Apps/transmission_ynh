@@ -6,7 +6,7 @@
         "en": "A Fast, Easy, and Free BitTorrent Client",
         "fr": "Un client BitTorrent libre et rapide"
     },
-    "version": "2.94~ynh1",
+    "version": "3.00~ynh1",
     "url": "https://www.transmissionbt.com",
     "upstream": {
         "license": "GPL-3.0",
@@ -20,7 +20,7 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">= 4.3.0"
+        "yunohost": ">= 11.0.9"
     },
     "multi_instance": false,
     "services": [
