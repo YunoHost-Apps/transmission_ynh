@@ -3,8 +3,8 @@
     "id": "transmission",
     "packaging_format": 1,
     "description": {
-        "en": "A Fast, Easy, and Free BitTorrent Client",
-        "fr": "Un client BitTorrent libre et rapide"
+        "en": "Fast, Easy, and Free BitTorrent Client",
+        "fr": "Client BitTorrent libre et rapide"
     },
     "version": "3.00~ynh1",
     "url": "https://www.transmissionbt.com",
