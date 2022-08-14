@@ -10,10 +10,8 @@
 		setup_private=1
 		setup_public=0
 		upgrade=1
-		# 1.0
-		upgrade=1	from_commit=7d887f6bc1e29ce94de703517d5302580cbb8a7e
-		# 1.0~ynh4
-		upgrade=1	from_commit=c65b76e919089f3f88d2522cef2300db6f78201f
+		# 2.94~ynh1
+		upgrade=1	from_commit=c07a09d875cf11b4e3a3147e9e35ef5e06788cff
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
@@ -21,3 +19,8 @@
 ;;; Options
 Email=
 Notification=none
+;;; Upgrade options
+	; commit=c07a09d875cf11b4e3a3147e9e35ef5e06788cff
+		name=2.94~ynh1
+		manifest_arg=domain=DOMAIN&path=PATH&is_public=1&language=fr&admin=USER&password=pass&port=666&
+

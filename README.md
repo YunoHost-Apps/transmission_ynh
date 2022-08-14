@@ -18,7 +18,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Transmission is a fast, easy, and free BitTorrent client.
 
 
-**Shipped version:** 2.94~ynh1
+**Shipped version:** 3.00~ynh1
 
 
 ## Screenshots
