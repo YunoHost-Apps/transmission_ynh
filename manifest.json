@@ -12,7 +12,8 @@
         "license": "GPL-3.0",
         "website": "https://www.transmissionbt.com",
         "admindoc": "https://github.com/transmission/transmission/wiki",
-        "code": "https://github.com/transmission/transmission"
+        "code": "https://github.com/transmission/transmission",
+        "cpe": "cpe:2.3:a:transmissionbt:transmission"
     },
     "license": "GPL-3.0",
     "maintainer": {
