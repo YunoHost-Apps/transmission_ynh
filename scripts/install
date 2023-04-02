@@ -107,6 +107,13 @@ ynh_script_progression --message="Starting a systemd service..."
 ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring permissions..." --weight=1
+
+ynh_permission_create --permission="rpc" --url="/transmission/rpc" --allowed="visitors" --show_tile="false" --protected="true"
+
+#=================================================
 # RETRIEVE HASHED PASSWORD
 #=================================================
 ynh_script_progression --message="Saving the encrypted password..."
