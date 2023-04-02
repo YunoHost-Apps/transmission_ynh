@@ -13,52 +13,52 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
+#REMOVEME? ynh_clean_setup () {
 	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-domain=$YNH_APP_ARG_DOMAIN
-path_url=$YNH_APP_ARG_PATH
+#REMOVEME? domain=$YNH_APP_ARG_DOMAIN
+#REMOVEME? path=$YNH_APP_ARG_PATH
 
-app=$YNH_APP_INSTANCE_NAME
+#REMOVEME? app=$YNH_APP_INSTANCE_NAME
 
 rpcpassword=$(ynh_string_random)
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..."
+#REMOVEME? ynh_script_progression --message="Validating installation parameters..."
 
 # Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+#REMOVEME? ynh_webpath_register --app=$app --domain=$domain --path=$path
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=2
+#REMOVEME? ynh_script_progression --message="Storing installation settings..." --weight=2
 
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
+#REMOVEME? ynh_app_setting_set --app=$app --key=domain --value=$domain
+#REMOVEME? ynh_app_setting_set --app=$app --key=path --value=$path
+#REMOVEME? ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Finding an available port..." --weight=16
+#REMOVEME? ynh_script_progression --message="Finding an available port..." --weight=16
 
 # Find an available port
-port=$(ynh_find_port --port=9091)
-ynh_app_setting_set --app=$app --key=port --value=$port
-peer_port=$(ynh_find_port --port=51413)
-ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
+#REMOVEME? port=$(ynh_find_port --port=9091)
+#REMOVEME? ynh_app_setting_set --app=$app --key=port --value=$port
+#REMOVEME? peer_port=$(ynh_find_port --port=51413)
+#REMOVEME? ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
 
 # Open the port
 ynh_script_progression --message="Configuring firewall..."
@@ -68,9 +68,9 @@ ynh_exec_warn_less yunohost firewall allow Both $peer_port
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing dependencies..." --weight=16
+#REMOVEME? ynh_script_progression --message="Installing dependencies..." --weight=16
 
-ynh_install_app_dependencies $pkg_dependencies
+#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 # Fix a stupid issue which happens sometimes ...
 # transmission-common is installed (it's a dependency of
@@ -80,7 +80,7 @@ ynh_install_app_dependencies $pkg_dependencies
 # Explicitly reinstalling the packages fixes the issue :|
 if [ ! -d /usr/share/transmission/ ]
 then
-   ynh_install_app_dependencies $pkg_dependencies --reinstall
+#REMOVEME?    ynh_install_app_dependencies $pkg_dependencies --reinstall
 fi
 
 #=================================================
@@ -90,15 +90,15 @@ fi
 #=================================================
 ynh_script_progression --message="Creating a data directory..."
 
-datadir=/home/yunohost.transmission
-ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+#REMOVEME? data_dir=/home/yunohost.transmission
+#REMOVEME? ynh_app_setting_set --app=$app --key=data_dir --value=$data_dir
 
-mkdir -p $datadir/{progress,completed,watched}
+mkdir -p $data_dir/{progress,completed,watched}
 
-chmod -R 764 $datadir
-chmod -R 777 $datadir/watched
-chown -R debian-transmission:www-data "$datadir"
-chown -R debian-transmission: $datadir/{progress,watched}
+chmod -R 764 $data_dir
+chmod -R 777 $data_dir/watched
+chown -R debian-transmission:www-data "$data_dir"
+chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
 # NGINX CONFIGURATION
@@ -116,11 +116,11 @@ ynh_script_progression --message="Adding a configuration file..." --weight=2
 # Transmission has to be stopped before modifying its config
 ynh_systemd_action --service_name=transmission-daemon --action=stop
 
-if [ "$path_url" != "/" ]
+if [ "$path" != "/" ]
 then
-	path_less="$path_url/"
+	path_less="$path/"
 else
-	path_less="$path_url"
+	path_less="$path"
 fi
 
 ynh_add_config --template="../conf/settings.json" --destination="/etc/transmission-daemon/settings.json"
@@ -145,11 +145,11 @@ ynh_script_progression --message="Adding multimedia directories..." --weight=4
 
 ynh_multimedia_build_main_dir
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-ynh_multimedia_addfolder --source_dir="$datadir" --dest_dir="share/Torrents"
+ynh_multimedia_addfolder --source_dir="$data_dir" --dest_dir="share/Torrents"
 # And share completed directory
-ynh_multimedia_addfolder --source_dir="$datadir/completed" --dest_dir="share/Torrents"
+ynh_multimedia_addfolder --source_dir="$data_dir/completed" --dest_dir="share/Torrents"
 # Share also watched directory, to allow to use it easily
-ynh_multimedia_addfolder --source_dir="$datadir/watched" --dest_dir="share/Torrent to download"
+ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torrent to download"
 
 #=================================================
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
@@ -179,16 +179,16 @@ ynh_systemd_action --service_name=transmission-daemon --action="start"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring permissions..." --weight=1
+#REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
 
-ynh_permission_create --permission="rpc" --url="/transmission/rpc" --allowed="visitors" --show_tile="false" --protected="true"
+#REMOVEME? ynh_permission_create --permission="rpc" --url="/transmission/rpc" --allowed="visitors" --show_tile="false" --protected="true"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
+#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..."
 
-ynh_systemd_action --service_name=nginx --action=reload
+#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
