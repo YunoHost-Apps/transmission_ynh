@@ -17,8 +17,6 @@ ynh_script_progression --message="Restoring the data directory..."
 
 ynh_restore_file --origin_path="$data_dir" --not_mandatory
 
-mkdir -p $data_dir/{progress,completed,watched}
-
 chmod -R 764 $data_dir
 chmod -R 775 $data_dir/watched
 chown -R debian-transmission:www-data "$data_dir"
