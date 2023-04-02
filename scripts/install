@@ -23,8 +23,6 @@ ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 #=================================================
 ynh_script_progression --message="Creating a data directory..."
 
-mkdir -p $data_dir/{progress,completed,watched}
-
 chmod -R 764 $data_dir
 chmod -R 775 $data_dir/watched
 chown -R debian-transmission:www-data "$data_dir"
