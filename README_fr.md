@@ -5,24 +5,25 @@ It shall NOT be edited by hand.
 
 # Transmission pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+
 [![Installer Transmission avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Transmission rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Transmission rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 Transmission est un client BitTorrent libre, efficace et simple.
 
 
 **Version incluse :** 3.00~ynh1
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Transmission](./doc/screenshots/transmission.jpg)
+![Capture d’écran de Transmission](./doc/screenshots/transmission.jpg)
 
 ## Avertissements / informations importantes
 
@@ -50,9 +51,9 @@ Vous pouvez utiliser les informations suivantes pour vous connecter à votre ser
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://www.transmissionbt.com>
-* Documentation officielle de l'admin : <https://github.com/transmission/transmission/wiki>
-* Dépôt de code officiel de l'app : <https://github.com/transmission/transmission>
+* Site officiel de l’app : <https://www.transmissionbt.com>
+* Documentation officielle de l’admin : <https://github.com/transmission/transmission/wiki>
+* Dépôt de code officiel de l’app : <https://github.com/transmission/transmission>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_transmission>
 * Signaler un bug : <https://github.com/YunoHost-Apps/transmission_ynh/issues>
 
@@ -68,4 +69,4 @@ ou
 sudo yunohost app upgrade transmission -u https://github.com/YunoHost-Apps/transmission_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
