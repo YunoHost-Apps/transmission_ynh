@@ -10,18 +10,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..."
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-
-#=================================================
 # STANDARD REMOVE
 #=================================================
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
@@ -43,30 +31,6 @@ ynh_script_progression --message="Removing NGINX web server configuration..."
 ynh_remove_nginx_config
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing dependencies..." --weight=9
-
-# Remove metapackage and its dependencies
-#REMOVEME? ynh_remove_app_dependencies
-
-#=================================================
-# CLOSE A PORT
-#=================================================
-
-if yunohost firewall list | grep -q "\- $port$"
-then
-	ynh_script_progression --message="Closing port $port..."
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
-fi
-
-if yunohost firewall list | grep -q "\- $peer_port$"
-then
-	ynh_script_progression --message="Closing port $peer_port..."
-	ynh_exec_warn_less yunohost firewall disallow Both $peer_port
-fi
-
-#=================================================
 # SPECIFIC REMOVE
 #=================================================
 # REMOVE VARIOUS FILES
@@ -83,16 +47,6 @@ then
 	ynh_secure_remove --file=/etc/sysctl.d/90-transmission.conf
 	sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# REMOVE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Removing the dedicated system user..."
-
-# Delete a system user
-#REMOVEME? ynh_system_user_delete --username=debian-transmission
 
 #=================================================
 # END OF SCRIPT

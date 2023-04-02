@@ -10,39 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=2
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-#REMOVEME? rpcpassword=$(ynh_app_setting_get --app=$app --key=rpcpassword)
-
-#=================================================
 # CHECK VERSION
 #=================================================
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	ynh_clean_check_starting
-	# Restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -52,37 +23,6 @@ upgrade_type=$(ynh_check_app_version_changed)
 ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=transmission-daemon --action="stop"
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
-
-if [ -z "$port" ]; then
-	port=9091
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=port --value=$port
-fi
-
-if [ -z "$peer_port" ]; then
-	peer_port=51413
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
-fi
-
-# Add peer_port also on UDP.
-ynh_exec_warn_less yunohost firewall allow UDP $peer_port
-
-# If data_dir doesn't exist, create it
-if [ -z "$data_dir" ]; then
-	data_dir=/home/yunohost.transmission
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=data_dir --value=$data_dir
-fi
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=7
-
-#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -142,10 +82,13 @@ fi
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
+
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
 ynh_multimedia_addfolder --source_dir="$data_dir" --dest_dir="share/Torrents"
+
 # And share completed directory
 ynh_multimedia_addfolder --source_dir="$data_dir/completed" --dest_dir="share/Torrents"
+
 # Share also watched directory, to allow to use it easily
 ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torrent to download"
 
@@ -158,6 +101,7 @@ if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/
 then
 	cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 fi
+
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
@@ -175,13 +119,6 @@ yunohost service add transmission-daemon --description="BitTorrent Client" --log
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
 ynh_systemd_action --service_name=transmission-daemon --action="start"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..."
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

@@ -10,78 +10,11 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-#REMOVEME? ynh_clean_setup () {
-	ynh_clean_check_starting
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-#REMOVEME? domain=$YNH_APP_ARG_DOMAIN
-#REMOVEME? path=$YNH_APP_ARG_PATH
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
 rpcpassword=$(ynh_string_random)
-
-#=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Validating installation parameters..."
-
-# Register (book) web path
-#REMOVEME? ynh_webpath_register --app=$app --domain=$domain --path=$path
-
-#=================================================
-# STORE SETTINGS FROM MANIFEST
-#=================================================
-#REMOVEME? ynh_script_progression --message="Storing installation settings..." --weight=2
-
-#REMOVEME? ynh_app_setting_set --app=$app --key=domain --value=$domain
-#REMOVEME? ynh_app_setting_set --app=$app --key=path --value=$path
-#REMOVEME? ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# FIND AND OPEN A PORT
-#=================================================
-#REMOVEME? ynh_script_progression --message="Finding an available port..." --weight=16
-
-# Find an available port
-#REMOVEME? port=$(ynh_find_port --port=9091)
-#REMOVEME? ynh_app_setting_set --app=$app --key=port --value=$port
-#REMOVEME? peer_port=$(ynh_find_port --port=51413)
-#REMOVEME? ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
-
-# Open the port
-ynh_script_progression --message="Configuring firewall..."
-ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
-ynh_exec_warn_less yunohost firewall allow Both $peer_port
-
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Installing dependencies..." --weight=16
-
-#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
-
-# Fix a stupid issue which happens sometimes ...
-# transmission-common is installed (it's a dependency of
-# transmission-daemon) but somehow the files it's supposed
-# to add ain't there ... and possibly also the transmission user
-# is missing.
-# Explicitly reinstalling the packages fixes the issue :|
-if [ ! -d /usr/share/transmission/ ]
-then
-#REMOVEME?    ynh_install_app_dependencies $pkg_dependencies --reinstall
-fi
+ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
 #=================================================
 # SPECIFIC SETUP
@@ -89,9 +22,6 @@ fi
 # CREATE DATA DIRECTORY
 #=================================================
 ynh_script_progression --message="Creating a data directory..."
-
-#REMOVEME? data_dir=/home/yunohost.transmission
-#REMOVEME? ynh_app_setting_set --app=$app --key=data_dir --value=$data_dir
 
 mkdir -p $data_dir/{progress,completed,watched}
 
@@ -175,20 +105,6 @@ ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name=transmission-daemon --action="start"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-#REMOVEME? ynh_script_progression --message="Configuring permissions..." --weight=1
-
-#REMOVEME? ynh_permission_create --permission="rpc" --url="/transmission/rpc" --allowed="visitors" --show_tile="false" --protected="true"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..."
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
