@@ -39,8 +39,10 @@ ynh_script_progression --message="Removing various files..."
 
 # Web interface
 ynh_secure_remove --file=/usr/share/transmission
+
 # And data
 ynh_secure_remove --file=/var/lib/transmission-daemon
+
 # Kernel parameters
 if [ -e /proc/sys/net/core/rmem_max ]
 then

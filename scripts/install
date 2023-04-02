@@ -74,10 +74,13 @@ fi
 ynh_script_progression --message="Adding multimedia directories..." --weight=4
 
 ynh_multimedia_build_main_dir
+
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
 ynh_multimedia_addfolder --source_dir="$data_dir" --dest_dir="share/Torrents"
+
 # And share completed directory
 ynh_multimedia_addfolder --source_dir="$data_dir/completed" --dest_dir="share/Torrents"
+
 # Share also watched directory, to allow to use it easily
 ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torrent to download"
 
