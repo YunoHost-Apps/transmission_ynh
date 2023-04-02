@@ -26,7 +26,7 @@ ynh_script_progression --message="Creating a data directory..."
 mkdir -p $data_dir/{progress,completed,watched}
 
 chmod -R 764 $data_dir
-chmod -R 777 $data_dir/watched
+chmod -R 775 $data_dir/watched
 chown -R debian-transmission:www-data "$data_dir"
 chown -R debian-transmission: $data_dir/{progress,watched}
 
@@ -96,7 +96,7 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$peer_port"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$port_peer"
 
 #=================================================
 # START SYSTEMD SERVICE
