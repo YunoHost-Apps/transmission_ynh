@@ -59,7 +59,7 @@ else
 	path_less="$path"
 fi
 
-ynh_add_config --template="../conf/settings.json" --destination="/etc/transmission-daemon/settings.json"
+#ynh_add_config --template="../conf/settings.json" --destination="/etc/transmission-daemon/settings.json"
 
 chmod 400 "/etc/transmission-daemon/settings.json"
 chown debian-transmission:debian-transmission "/etc/transmission-daemon/settings.json"
