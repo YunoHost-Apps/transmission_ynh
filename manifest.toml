@@ -34,6 +34,10 @@ ram.runtime = "50M"
     type = "path"
     default = "/torrent"
 
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
 [resources]
 
     [resources.ports]
