@@ -1,7 +1,3 @@
-## Caractéristiques spécifiques YunoHost
-
- * Intégration avec les répertoires Multimédias de YunoHost
-
 ## Informations additionnelles
 Alternative à WebUI :
 

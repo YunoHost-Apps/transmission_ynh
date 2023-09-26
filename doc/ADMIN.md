@@ -1,7 +1,3 @@
-## YunoHost specific features
-
- * Integration with YunoHost Multimedia directories
-
 ## Additionnal informations
 Alternative to WebUI :
 

@@ -61,4 +61,4 @@ ram.runtime = "50M"
     rpc.protected = true
 
     [resources.apt]
-    packages = "transmission-daemon transmission-cli transmission-common acl"
+    packages = "transmission-daemon, transmission-cli, transmission-common, acl"
