@@ -10,39 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=2
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-port=$(ynh_app_setting_get --app=$app --key=port)
-peer_port=$(ynh_app_setting_get --app=$app --key=peer_port)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-rpcpassword=$(ynh_app_setting_get --app=$app --key=rpcpassword)
-
-#=================================================
 # CHECK VERSION
 #=================================================
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	ynh_clean_check_starting
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -52,37 +23,6 @@ ynh_abort_if_errors
 ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=transmission-daemon --action="stop"
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=4
-
-if [ -z "$port" ]; then
-	port=9091
-	ynh_app_setting_set --app=$app --key=port --value=$port
-fi
-
-if [ -z "$peer_port" ]; then
-	peer_port=51413
-	ynh_app_setting_set --app=$app --key=peer_port --value=$peer_port
-fi
-
-# Add peer_port also on UDP.
-ynh_exec_warn_less yunohost firewall allow UDP $peer_port
-
-# If datadir doesn't exist, create it
-if [ -z "$datadir" ]; then
-	datadir=/home/yunohost.transmission
-	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-fi
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=7
-
-ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -99,12 +39,10 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Creating a data directory..."
 
-mkdir -p $datadir/{progress,completed,watched}
-
-chmod -R 764 $datadir
-chmod -R 777 $datadir/watched
-chown -R debian-transmission:www-data "$datadir"
-chown -R debian-transmission: $datadir/{progress,watched}
+chmod -R 764 $data_dir
+chmod -R 775 $data_dir/watched
+chown -R debian-transmission:www-data "$data_dir"
+chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -114,11 +52,11 @@ ynh_script_progression --message="Updating a configuration file..." --weight=2
 # Transmission has to be stopped before modifying its config
 ynh_systemd_action --service_name=transmission-daemon --action=stop
 
-if [ "$path_url" != "/" ]
+if [ "$path" != "/" ]
 then
-	path_less="$path_url/"
+	path_less="$path/"
 else
-	path_less="$path_url"
+	path_less="$path"
 fi
 
 ynh_add_config --template="../conf/settings.json" --destination="/etc/transmission-daemon/settings.json"
@@ -142,12 +80,15 @@ fi
 ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 ynh_multimedia_build_main_dir
+
 # Set rights on transmission directory (parent need to be readable by other, and progress need to be writable by multimedia. Because files will move)
-ynh_multimedia_addfolder --source_dir="$datadir" --dest_dir="share/Torrents"
+ynh_multimedia_addfolder --source_dir="$data_dir" --dest_dir="share/Torrents"
+
 # And share completed directory
-ynh_multimedia_addfolder --source_dir="$datadir/completed" --dest_dir="share/Torrents"
+ynh_multimedia_addfolder --source_dir="$data_dir/completed" --dest_dir="share/Torrents"
+
 # Share also watched directory, to allow to use it easily
-ynh_multimedia_addfolder --source_dir="$datadir/watched" --dest_dir="share/Torrent to download"
+ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torrent to download"
 
 #=================================================
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
@@ -158,6 +99,7 @@ if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/
 then
 	cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 fi
+
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
@@ -167,7 +109,7 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$peer_port"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$port_peer"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -175,13 +117,6 @@ yunohost service add transmission-daemon --description="BitTorrent Client" --log
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
 ynh_systemd_action --service_name=transmission-daemon --action="start"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
-
-ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

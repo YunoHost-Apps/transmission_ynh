@@ -4,9 +4,6 @@
 # COMMON VARIABLES
 #=================================================
 
-# dependencies used by the app
-pkg_dependencies="transmission-daemon transmission-cli transmission-common acl"
-
 #=================================================
 # PERSONAL HELPERS
 #=================================================

@@ -5,7 +5,8 @@ It shall NOT be edited by hand.
 
 # Transmission for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Working status](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Working status](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+
 [![Install Transmission with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -17,36 +18,16 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Transmission is a fast, easy, and free BitTorrent client.
 
+### YunoHost specific features
+
+ * Integration with YunoHost Multimedia directories
+
 
 **Shipped version:** 3.00~ynh1
 
 ## Screenshots
 
 ![Screenshot of Transmission](./doc/screenshots/transmission.jpg)
-
-## Disclaimers / important information
-
-## YunoHost specific features
-
- * Integration with YunoHost Multimedia directories
-
-## Additionnal informations
-Alternative to WebUI :
-
-You can use remote client on different platforms to manage your Transmission server:
-
-* Dekstop: Transmission-remote-GUI: https://github.com/transmission-remote-gui/transgui
-* Mobile: Transdroid: http://www.transdroid.org/
-* More clients here: https://transmissionbt.com/resources/
-
-You can use the following information to connect your server:
-
-* Remote host: Your domain or IP address (don't add folder)
-* Port: 443
-* SSL: Enabled
-* User: Your Yunohost Username
-* Password: Password of the Yunohost User above
-* RPC Path: /torrent/transmission/rpc (if you used the standard folder)
 
 ## Documentation and resources
 
