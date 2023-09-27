@@ -14,6 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
 if yunohost service status transmission-daemon >/dev/null 2>&1
@@ -22,20 +23,8 @@ then
 	yunohost service remove transmission-daemon
 fi
 
-#=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..."
-
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
-
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE VARIOUS FILES
-#=================================================
-ynh_script_progression --message="Removing various files..."
 
 # Web interface
 ynh_secure_remove --file=/usr/share/transmission
