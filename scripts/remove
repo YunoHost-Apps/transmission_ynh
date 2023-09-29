@@ -32,6 +32,9 @@ ynh_secure_remove --file=/usr/share/transmission
 # And data
 ynh_secure_remove --file=/var/lib/transmission-daemon
 
+# Removing old data_dir
+ynh_secure_remove --file="/home/yunohost.transmission"
+
 # Kernel parameters
 if [ -e /proc/sys/net/core/rmem_max ]
 then
