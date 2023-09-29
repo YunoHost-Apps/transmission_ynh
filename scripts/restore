@@ -71,7 +71,7 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
