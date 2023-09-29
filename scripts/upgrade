@@ -49,9 +49,6 @@ chown -R debian-transmission: $data_dir/{progress,watched}
 #=================================================
 ynh_script_progression --message="Updating a configuration file..." --weight=2
 
-# Transmission has to be stopped before modifying its config
-ynh_systemd_action --service_name=transmission-daemon --action=stop
-
 if [ "$path" != "/" ]
 then
 	path_less="$path/"
