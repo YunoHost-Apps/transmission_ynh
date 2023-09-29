@@ -19,9 +19,9 @@ ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# CREATE DATA DIRECTORY
+# CREATE DATA DIRECTORY PERMISSIONS
 #=================================================
-ynh_script_progression --message="Creating a data directory..."
+ynh_script_progression --message="Set data directory permissions..."
 
 chmod -R 764 $data_dir
 chmod -R 775 $data_dir/watched
