@@ -33,18 +33,6 @@ ynh_script_progression --message="Upgrading NGINX web server configuration..." -
 ynh_add_nginx_config
 
 #=================================================
-# SPECIFIC UPGRADE
-#=================================================
-# CREATE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Creating a data directory..." --weight=1
-
-chmod -R 764 $data_dir
-chmod -R 775 $data_dir/watched
-chown -R debian-transmission:www-data "$data_dir"
-chown -R debian-transmission: $data_dir/{progress,watched}
-
-#=================================================
 # UPDATE A CONFIG FILE
 #=================================================
 ynh_script_progression --message="Updating a configuration file..." --weight=2
@@ -103,6 +91,16 @@ then
 fi
 
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
+
+#=================================================
+# SET DATA DIRECTORY PERMISSIONS
+#=================================================
+ynh_script_progression --message="Set data directory permissions..." --weight=1
+
+chmod -R 764 $data_dir
+chmod -R 775 $data_dir/watched
+chown -R debian-transmission:www-data "$data_dir"
+chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
 # GENERIC FINALIZATION
