@@ -73,21 +73,16 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$port_peer"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Starting a systemd service..."
-
-ynh_systemd_action --service_name=transmission-daemon --action=start
+yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# RELOAD NGINX AND PHP-FPM
+# RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=2
+ynh_script_progression --message="Reloading NGINX web server and $app's service..." --weight=1
+
+ynh_systemd_action --service_name=transmission-daemon --action=start --log_path="systemd"
 
 ynh_systemd_action --service_name=nginx --action=reload
 

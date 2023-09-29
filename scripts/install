@@ -97,7 +97,7 @@ ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></d
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add transmission-daemon --description="BitTorrent Client" --log=systemd --needs_exposed_ports="$port_peer"
+yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -105,7 +105,7 @@ yunohost service add transmission-daemon --description="BitTorrent Client" --log
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name=transmission-daemon --action="start"
+ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
 # END OF SCRIPT
