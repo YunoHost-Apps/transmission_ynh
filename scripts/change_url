@@ -16,7 +16,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=transmission-daemon --action="stop"
+ynh_systemd_action --service_name=transmission-daemon --action="stop" --log_path="systemd"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -44,7 +44,7 @@ ynh_store_file_checksum --file="/etc/transmission-daemon/settings.json"
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=2
 
-ynh_systemd_action --service_name=transmission-daemon --action="start"
+ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
 # END OF SCRIPT

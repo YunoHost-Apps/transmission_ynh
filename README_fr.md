@@ -23,7 +23,7 @@ Transmission est un client BitTorrent libre, efficace et simple.
  * Intégration avec les répertoires Multimédias de YunoHost
 
 
-**Version incluse :** 3.00~ynh2
+**Version incluse :** 3.00~ynh3
 
 ## Captures d’écran
 
@@ -34,7 +34,6 @@ Transmission est un client BitTorrent libre, efficace et simple.
 * Site officiel de l’app : <https://www.transmissionbt.com>
 * Documentation officielle de l’admin : <https://github.com/transmission/transmission/wiki>
 * Dépôt de code officiel de l’app : <https://github.com/transmission/transmission>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_transmission>
 * Signaler un bug : <https://github.com/YunoHost-Apps/transmission_ynh/issues>
 
 ## Informations pour les développeurs

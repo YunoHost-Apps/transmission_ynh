@@ -5,7 +5,7 @@ name = "Transmission"
 description.en = "Fast, Easy, and Free BitTorrent Client"
 description.fr = "Client BitTorrent libre et rapide"
 
-version = "3.00~ynh2"
+version = "3.00~ynh3"
 
 maintainers = []
 
@@ -40,12 +40,6 @@ ram.runtime = "50M"
 
 [resources]
 
-    [resources.ports]
-    main.default = 9091
-    main.exposed = "TCP"
-    peer.default = 51413
-    peer.exposed = "Both"
-
     [resources.system_user]
 
     [resources.install_dir]
@@ -59,6 +53,12 @@ ram.runtime = "50M"
     rpc.allowed = "visitors"
     rpc.show_tile = false
     rpc.protected = true
+
+    [resources.ports]
+    main.default = 9091
+    main.exposed = "TCP"
+    peer.default = 51413
+    peer.exposed = "Both"
 
     [resources.apt]
     packages = "transmission-daemon, transmission-cli, transmission-common, acl"
