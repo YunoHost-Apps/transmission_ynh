@@ -51,6 +51,33 @@ _save_and_revert_rpc_password_hash_to_password() {
 }
 
 
+_patch_download_locations() {
+    # First check if patching is required...
+    if ! grep -R /home/yunohost.transmission /var/lib/transmission-daemon/info/resume >/dev/null; then
+        return
+    fi
+
+    rpc_url="http://127.0.0.1:${port}${path_less}transmission/rpc"
+
+    mapfile -t stopped_torrents < <(
+        transmission-remote "$rpc_url" -l \
+            | awk -F '[[:space:]][[:space:]]+' '{if ($9 == "Stopped") print $2;}'
+    )
+
+    for torrent in "${stopped_torrents[@]}"; do
+        # Remove trailing '*' error marker
+        torrent="${torrent%\*}"
+        location=$(
+            transmission-remote "$rpc_url" -t $torrent -i | grep Location: | awk -F ': ' '{print $2}'
+        )
+        newlocation=$(
+            echo "$location" | sed -e 's|yunohost.transmission|yunohost.app/transmission|'
+        )
+        transmission-remote "$rpc_url" -t "$torrent" --find "$newlocation"
+        transmission-remote "$rpc_url" -t "$torrent" --verify
+    done
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================

@@ -49,6 +49,7 @@ ram.runtime = "50M"
 
     [resources.permissions]
     main.url = "/"
+
     rpc.url = "/transmission/rpc"
     rpc.allowed = "visitors"
     rpc.show_tile = false
