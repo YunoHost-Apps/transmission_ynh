@@ -121,6 +121,13 @@ ynh_script_progression --message="Starting a systemd service..." --weight=2
 ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
+# PATCH DOWNLOAD LOCATION IF DOWNLOAD PATH CHANGED
+#=================================================
+ynh_script_progression --message="Patching download locations..." --weight=1
+
+_patch_download_locations
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
