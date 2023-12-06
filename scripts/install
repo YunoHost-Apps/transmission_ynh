@@ -14,7 +14,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 rpcpassword=$(ynh_string_random)
-ynh_app_setting_set --app=$app --key=rpcpassword --value="$rpcpassword"
 
 #=================================================
 # SPECIFIC SETUP
@@ -106,6 +105,13 @@ ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
+
+#=================================================
+# RETRIEVE HASHED PASSWORD
+#=================================================
+ynh_script_progression --message="Saving the encrypted password..."
+
+_wait_and_save_rcp_password_hash
 
 #=================================================
 # END OF SCRIPT
