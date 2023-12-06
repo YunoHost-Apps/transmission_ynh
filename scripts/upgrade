@@ -44,6 +44,8 @@ else
 	path_less="$path"
 fi
 
+_save_and_revert_rpc_password_hash_to_password
+
 ynh_add_config --template="../conf/settings.json" --destination="$SETTINGS_FILE"
 
 chmod 400 "$SETTINGS_FILE"
