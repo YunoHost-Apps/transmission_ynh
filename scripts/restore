@@ -37,8 +37,8 @@ ynh_script_progression --message="Restoring various files..." --weight=2
 # Transmission has to be stopped before modifying its config
 ynh_systemd_action --service_name=transmission-daemon --action=stop
 
-ynh_secure_remove --file=/etc/transmission-daemon/settings.json
-ynh_restore_file --origin_path=/etc/transmission-daemon/settings.json
+ynh_secure_remove --file="$SETTINGS_FILE"
+ynh_restore_file --origin_path="$SETTINGS_FILE"
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
