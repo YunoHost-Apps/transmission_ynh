@@ -5,7 +5,7 @@ name = "Transmission"
 description.en = "Fast, Easy, and Free BitTorrent Client"
 description.fr = "Client BitTorrent libre et rapide"
 
-version = "3.00~ynh3"
+version = "3.00~ynh4"
 
 maintainers = []
 
