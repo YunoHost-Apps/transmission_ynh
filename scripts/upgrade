@@ -68,8 +68,8 @@ ynh_script_progression --message="Adding multimedia directories..." --weight=3
 
 # Remove possibly dangling symlinks created before the /home/yunohost.transmission -> /home/yunohost.app/transmission transition
 # Use rm because ynh_secure_remove fails on dangling symlinks, see https://github.com/YunoHost/issues/issues/2253...
-rm "$MEDIA_DIRECTORY/share/Torrents"
-rm "$MEDIA_DIRECTORY/share/Torrent to download"
+rm "$MEDIA_DIRECTORY/share/Torrents" || true
+rm "$MEDIA_DIRECTORY/share/Torrent to download" || true
 
 ynh_multimedia_build_main_dir
 
