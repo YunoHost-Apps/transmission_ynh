@@ -18,10 +18,7 @@ Il NE doit PAS être modifié à la main.
 
 Transmission est un client BitTorrent libre, efficace et simple.
 
-### Caractéristiques spécifiques YunoHost
-
- * Intégration avec les répertoires Multimédias de YunoHost
-
+Cette app est intégrée avec les répertoires multimédias de YunoHost
 
 **Version incluse :** 3.00~ynh7
 
