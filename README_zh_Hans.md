@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Transmission
 
-[![集成程度](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![工作状态](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
 
 [![使用 YunoHost 安装 Transmission](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
