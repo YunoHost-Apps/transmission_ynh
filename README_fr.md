@@ -5,7 +5,7 @@ Il NE doit PAS être modifié à la main.
 
 # Transmission pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![Niveau d’intégration](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
 
 [![Installer Transmission avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 

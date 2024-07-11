@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Transmission YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/transmission.svg)](https://dash.yunohost.org/appci/app/transmission) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
 
 [![Instalatu Transmission YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
