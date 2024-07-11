@@ -1,8 +1,8 @@
 ## General tips
 
-Torrents are located in `__DATA_DIR__` and should be accessible from `https://__DOMAIN____PATH__`.
+Torrents are located in `__DATA_DIR__` and should be accessible from `https://__DOMAIN____PATH__/downloads`.
 
-To download the files, an SFTP client can be used, or the SCP command, or you can also configure another app such as Nextcloud to be able to browse these files.
+Alternatively, you can download the files using an SFTP client, the SCP command, or you configure another app such as Nextcloud to be able to browse these files.
 
 ## Alternative to the web ui
 
