@@ -1,14 +1,10 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
 SETTINGS_FILE="/etc/transmission-daemon/settings.json"
-
-#=================================================
-# PERSONAL HELPERS
-#=================================================
 
 _wait_and_save_rcp_password_hash() {
     # Transmission first reads the plaintext password in the config, then
@@ -18,9 +14,9 @@ _wait_and_save_rcp_password_hash() {
         pass=$(jq -r '.["rpc-password"]' "$SETTINGS_FILE")
         if [[ "$pass" == "{"* ]]; then
             # Save the hashed password
-            ynh_app_setting_set --app="$app" --key="rpcpassword" --value="$pass"
+            ynh_app_setting_set --key="rpcpassword" --value="$pass"
             # Save the edited settings file
-            ynh_store_file_checksum --file="$SETTINGS_FILE"
+            ynh_store_file_checksum "$SETTINGS_FILE"
             return
         fi
         sleep 1
@@ -29,7 +25,6 @@ _wait_and_save_rcp_password_hash() {
     echo "Timeout! Transmission did not save a cryptographic hash of the password in 10 seconds!"
     return 1
 }
-
 
 _save_and_revert_rpc_password_hash_to_password() {
     # This one is tricky :
@@ -44,12 +39,11 @@ _save_and_revert_rpc_password_hash_to_password() {
         return
     fi
 
-    ynh_app_setting_set --app="$app" --key="rpcpassword" --value="$password_hash"
+    ynh_app_setting_set --key="rpcpassword" --value="$password_hash"
 
     # Revert the change to maybe prevent ynh_backup_if_checksum_is_different to trigger
     sed -i "s|\"${password_hash}\"|\"${rpcpassword}\"|" "$SETTINGS_FILE"
 }
-
 
 _patch_download_locations() {
     # First check if patching is required...
@@ -85,7 +79,7 @@ _add_download_button() {
         local css_file="$web_dir/style/transmission/common.css"
         local match='<div id="toolbar-inspector" title="Toggle Inspector"></div>'
         local replace='<div id="toolbar-inspector" title="Toggle Inspector"></div><div id="toolbar-separator"></div><a href="../../downloads/" id="toolbar-downloads" title="Downloads" target="_blank"></a>'
-        ynh_replace_string "$match" "$replace" "$web_dir/index.html"
+        ynh_replace --match="$match" --replace="$replace" --file="$web_dir/index.html"
     elif [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
         local web_dir=/usr/share/transmission/public_html
         local img_file="$web_dir/images/toolbar-downloads.png"
@@ -99,11 +93,3 @@ _add_download_button() {
         cat ../conf/sources/ynh_common.css >> "$css_file"
     fi
 }
-
-#=================================================
-# EXPERIMENTAL HELPERS
-#=================================================
-
-#=================================================
-# FUTURE OFFICIAL HELPERS
-#=================================================
