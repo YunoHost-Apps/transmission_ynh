@@ -1,41 +1,27 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# CHECK VERSION
-#=================================================
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name=transmission-daemon --action="stop" --log_path="systemd"
+ynh_systemctl --service=transmission-daemon --action="stop" --log_path="systemd"
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=2
+ynh_script_progression "Upgrading NGINX web server configuration..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..." --weight=2
+ynh_script_progression "Updating configuration..."
 
 if [ "$path" != "/" ]
 then
@@ -46,14 +32,14 @@ fi
 
 _save_and_revert_rpc_password_hash_to_password
 
-ynh_add_config --template="../conf/settings.json" --destination="$SETTINGS_FILE"
+ynh_config_add --template="settings.json" --destination="$SETTINGS_FILE"
 
 chmod 400 "$SETTINGS_FILE"
 chown debian-transmission:debian-transmission "$SETTINGS_FILE"
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-	ynh_add_config --template="../conf/90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
+	ynh_config_add --template="90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
 
 	chmod 400 "/etc/sysctl.d/90-transmission.conf"
 	chown debian-transmission:debian-transmission "/etc/sysctl.d/90-transmission.conf"
@@ -64,10 +50,10 @@ fi
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
-ynh_script_progression --message="Adding multimedia directories..." --weight=3
+ynh_script_progression "Adding multimedia directories..."
 
 # Remove possibly dangling symlinks created before the /home/yunohost.transmission -> /home/yunohost.app/transmission transition
-# Use rm because ynh_secure_remove fails on dangling symlinks, see https://github.com/YunoHost/issues/issues/2253...
+# Use rm because ynh_safe_rm fails on dangling symlinks, see https://github.com/YunoHost/issues/issues/2253...
 rm "$MEDIA_DIRECTORY/share/Torrents" || true
 rm "$MEDIA_DIRECTORY/share/Torrent to download" || true
 
@@ -86,18 +72,19 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
 #=================================================
 
-cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
+cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
 if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/web/style/transmission/common.css
 then
-	cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
+	cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 fi
 
-ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
+# FIXMEhelpers2.1: ynh_replace used with positional args. Please add the keywords: --match=, --replace=, --file=
+ynh_replace "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
 # SET DATA DIRECTORY PERMISSIONS
 #=================================================
-ynh_script_progression --message="Set data directory permissions..." --weight=1
+ynh_script_progression "Set data directory permissions..."
 
 chmod -R 775 $data_dir
 chmod -R 775 $data_dir/watched
@@ -105,25 +92,23 @@ chown -R debian-transmission:www-data "$data_dir"
 chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_script_progression "Integrating service in YunoHost..."
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=2
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
+ynh_systemctl --service=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
 # PATCH DOWNLOAD LOCATION IF DOWNLOAD PATH CHANGED
 #=================================================
-ynh_script_progression --message="Patching download locations..." --weight=1
+ynh_script_progression "Patching download locations..."
 
 _patch_download_locations
 
@@ -131,4 +116,4 @@ _patch_download_locations
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"

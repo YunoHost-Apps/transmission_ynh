@@ -1,14 +1,10 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
 SETTINGS_FILE="/etc/transmission-daemon/settings.json"
-
-#=================================================
-# PERSONAL HELPERS
-#=================================================
 
 _wait_and_save_rcp_password_hash() {
     # Transmission first reads the plaintext password in the config, then
@@ -18,9 +14,9 @@ _wait_and_save_rcp_password_hash() {
         pass=$(jq -r '.["rpc-password"]' "$SETTINGS_FILE")
         if [[ "$pass" == "{"* ]]; then
             # Save the hashed password
-            ynh_app_setting_set --app="$app" --key="rpcpassword" --value="$pass"
+            ynh_app_setting_set --key="rpcpassword" --value="$pass"
             # Save the edited settings file
-            ynh_store_file_checksum --file="$SETTINGS_FILE"
+            ynh_store_file_checksum "$SETTINGS_FILE"
             return
         fi
         sleep 1
@@ -29,7 +25,6 @@ _wait_and_save_rcp_password_hash() {
     echo "Timeout! Transmission did not save a cryptographic hash of the password in 10 seconds!"
     return 1
 }
-
 
 _save_and_revert_rpc_password_hash_to_password() {
     # This one is tricky :
@@ -44,12 +39,11 @@ _save_and_revert_rpc_password_hash_to_password() {
         return
     fi
 
-    ynh_app_setting_set --app="$app" --key="rpcpassword" --value="$password_hash"
+    ynh_app_setting_set --key="rpcpassword" --value="$password_hash"
 
     # Revert the change to maybe prevent ynh_backup_if_checksum_is_different to trigger
     sed -i "s|\"${password_hash}\"|\"${rpcpassword}\"|" "$SETTINGS_FILE"
 }
-
 
 _patch_download_locations() {
     # First check if patching is required...
@@ -77,11 +71,3 @@ _patch_download_locations() {
         transmission-remote "$rpc_url" -t "$torrent" --verify
     done
 }
-
-#=================================================
-# EXPERIMENTAL HELPERS
-#=================================================
-
-#=================================================
-# FUTURE OFFICIAL HELPERS
-#=================================================
