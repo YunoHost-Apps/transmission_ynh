@@ -10,8 +10,6 @@ source /usr/share/yunohost/helpers
 rpcpassword=$(ynh_string_random)
 
 #=================================================
-# SPECIFIC SETUP
-#=================================================
 # CREATE DATA DIRECTORY PERMISSIONS
 #=================================================
 ynh_script_progression "Set data directory permissions..."
@@ -26,7 +24,6 @@ chown -R debian-transmission: "$data_dir"/{progress,watched}
 #=================================================
 ynh_script_progression "Configuring NGINX web server..."
 
-# Create a dedicated NGINX config
 ynh_config_add_nginx
 
 #=================================================
@@ -81,8 +78,7 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 
 cp ../sources/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
 cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
-# FIXMEhelpers2.1: ynh_replace used with positional args. Please add the keywords: --match=, --replace=, --file=
-ynh_replace "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
+ynh_replace --match="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" --replace="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" --file="/usr/share/transmission/web/index.html"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -96,7 +92,6 @@ yunohost service add transmission-daemon --description="BitTorrent Client" --log
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
 ynh_systemctl --service=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================

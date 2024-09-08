@@ -15,7 +15,6 @@ ynh_systemctl --service=transmission-daemon --action="stop" --log_path="systemd"
 #=================================================
 ynh_script_progression "Upgrading NGINX web server configuration..."
 
-# Create a dedicated NGINX config
 ynh_config_add_nginx
 
 #=================================================
@@ -78,8 +77,7 @@ then
 	cat ../sources/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 fi
 
-# FIXMEhelpers2.1: ynh_replace used with positional args. Please add the keywords: --match=, --replace=, --file=
-ynh_replace "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
+ynh_replace --match="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" --replace="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" --file="/usr/share/transmission/web/index.html"
 
 #=================================================
 # SET DATA DIRECTORY PERMISSIONS
