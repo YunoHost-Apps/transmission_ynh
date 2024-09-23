@@ -1,22 +1,8 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# CHECK VERSION
-#=================================================
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# STANDARD UPGRADE STEPS
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
@@ -29,7 +15,6 @@ ynh_systemd_action --service_name=transmission-daemon --action="stop" --log_path
 #=================================================
 ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=2
 
-# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -104,8 +89,6 @@ chmod -R 775 $data_dir/watched
 chown -R debian-transmission:www-data "$data_dir"
 chown -R debian-transmission: $data_dir/{progress,watched}
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================

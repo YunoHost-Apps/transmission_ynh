@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -15,8 +9,6 @@ source /usr/share/yunohost/helpers
 
 rpcpassword=$(ynh_string_random)
 
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # CREATE DATA DIRECTORY PERMISSIONS
 #=================================================
@@ -89,8 +81,6 @@ cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/
 cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
 ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================

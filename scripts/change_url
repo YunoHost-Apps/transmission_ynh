@@ -1,16 +1,8 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# STANDARD MODIFICATIONS
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
@@ -26,8 +18,6 @@ ynh_script_progression --message="Updating NGINX web server configuration..." --
 ynh_change_url_nginx_config
 
 #=================================================
-# SPECIFIC MODIFICATIONS
-#=================================================
 # UPDATE TRANSMISSION CONFIGURATION
 #=================================================
 
@@ -37,8 +27,6 @@ ynh_replace_string --match_string="rpc-url\": \"${old_path%/}/transmission/" --r
 
 ynh_store_file_checksum --file="$SETTINGS_FILE"
 
-#=================================================
-# GENERIC FINALISATION
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================

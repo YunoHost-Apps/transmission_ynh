@@ -19,4 +19,4 @@ You can use the following information to connect your server:
 * SSL: Enabled
 * User: Your Yunohost Username
 * Password: Password of the Yunohost User above
-* RPC Path: `/torrent/transmission/rpc` (if you used the standard folder)
+* RPC Path: `__PATH__/transmission/rpc` (replace any double slash with a single one)
