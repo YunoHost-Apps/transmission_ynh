@@ -41,10 +41,10 @@ else
 	path_less="$path"
 fi
 
-ynh_config_add --template="settings.json" --destination="$SETTINGS_FILE"
+ynh_config_add --template="settings.json" --destination="/etc/transmission-daemon/settings.json"
 
-chmod 400 "$SETTINGS_FILE"
-chown debian-transmission:debian-transmission "$SETTINGS_FILE"
+chmod 400 "/etc/transmission-daemon/settings.json"
+chown debian-transmission:debian-transmission "/etc/transmission-daemon/settings.json"
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then

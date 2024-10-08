@@ -12,22 +12,20 @@ ynh_print_info "Declaring files to be backed up..."
 ynh_backup "$data_dir"
 
 #=================================================
-# BACKUP THE NGINX CONFIGURATION
+# SYSTEM CONFIGURATION
 #=================================================
 
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-#=================================================
-# BACKUP VARIOUS FILES
-#=================================================
+ynh_backup "/etc/transmission-daemon/settings.json"
 
-ynh_backup "$SETTINGS_FILE"
 if [ -e /proc/sys/net/core/rmem_max ]
 then
 	ynh_backup "/etc/sysctl.d/90-transmission.conf"
 fi
 
 ynh_backup "/usr/share/transmission"
+
 ynh_backup "/var/lib/transmission-daemon"
 
 #=================================================

@@ -16,34 +16,26 @@ chown -R debian-transmission:www-data "$data_dir"
 chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
-# RESTORE THE NGINX CONFIGURATION
+# RESTORE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression "Restoring the NGINX web server configuration..."
+ynh_script_progression "Restoring system configurations related to $app..."
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-#=================================================
-# RESTORE VARIOUS FILES
-#=================================================
-ynh_script_progression "Restoring various files..."
-
 # Transmission has to be stopped before modifying its config
-ynh_systemctl --service=transmission-daemon --action=stop
+ynh_systemctl --service=transmission-daemon --action="stop" --log_path="systemd"
 
-ynh_safe_rm "$SETTINGS_FILE"
-ynh_restore "$SETTINGS_FILE"
+ynh_restore "/etc/transmission-daemon/settings.json"
+
+ynh_restore /usr/share/transmission
+
+ynh_restore /var/lib/transmission-daemon
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
 	ynh_restore "/etc/sysctl.d/90-transmission.conf"
 	sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
-
-ynh_safe_rm /usr/share/transmission
-ynh_restore /usr/share/transmission
-
-ynh_safe_rm /var/lib/transmission-daemon
-ynh_restore /var/lib/transmission-daemon
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION

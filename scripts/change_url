@@ -21,11 +21,11 @@ ynh_config_change_url_nginx
 # UPDATE TRANSMISSION CONFIGURATION
 #=================================================
 
-ynh_backup_if_checksum_is_different "$SETTINGS_FILE"
+ynh_backup_if_checksum_is_different "/etc/transmission-daemon/settings.json"
 
-ynh_replace --match="rpc-url\": \"${old_path%/}/transmission/" --replace="rpc-url\": \"${new_path%/}/transmission/" --file="$SETTINGS_FILE"
+ynh_replace --match="rpc-url\": \"${old_path%/}/transmission/" --replace="rpc-url\": \"${new_path%/}/transmission/" --file="/etc/transmission-daemon/settings.json"
 
-ynh_store_file_checksum "$SETTINGS_FILE"
+ynh_store_file_checksum "/etc/transmission-daemon/settings.json"
 
 #=================================================
 # START SYSTEMD SERVICE
