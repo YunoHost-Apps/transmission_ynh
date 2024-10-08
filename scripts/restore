@@ -6,9 +6,9 @@ source /usr/share/yunohost/helpers
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Restoring the data directory..."
+ynh_script_progression "Restoring the data directory..."
 
-ynh_restore_file --origin_path="$data_dir" --not_mandatory
+ynh_restore "$data_dir"
 
 chmod -R 775 $data_dir
 chmod -R 775 $data_dir/watched
@@ -16,38 +16,31 @@ chown -R debian-transmission:www-data "$data_dir"
 chown -R debian-transmission: $data_dir/{progress,watched}
 
 #=================================================
-# RESTORE THE NGINX CONFIGURATION
+# RESTORE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Restoring the NGINX web server configuration..."
+ynh_script_progression "Restoring system configurations related to $app..."
 
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-#=================================================
-# RESTORE VARIOUS FILES
-#=================================================
-ynh_script_progression --message="Restoring various files..." --weight=2
+# Transmission has to be stopped before modifying its config
+ynh_systemctl --service=transmission-daemon --action="stop" --log_path="systemd"
 
-ynh_systemd_action --service_name=transmission-daemon --action=stop
+ynh_restore "/etc/transmission-daemon/settings.json"
 
-ynh_secure_remove --file="$SETTINGS_FILE"
-ynh_restore_file --origin_path="$SETTINGS_FILE"
+ynh_restore /usr/share/transmission
+
+ynh_restore /var/lib/transmission-daemon
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-	ynh_restore_file --origin_path="/etc/sysctl.d/90-transmission.conf"
+	ynh_restore "/etc/sysctl.d/90-transmission.conf"
 	sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
-
-ynh_secure_remove --file=/usr/share/transmission
-ynh_restore_file --origin_path=/usr/share/transmission
-
-ynh_secure_remove --file=/var/lib/transmission-daemon
-ynh_restore_file --origin_path=/var/lib/transmission-daemon
 
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
-ynh_script_progression --message="Adding multimedia directories..." --weight=4
+ynh_script_progression "Adding multimedia directories..."
 
 ynh_multimedia_build_main_dir
 
@@ -63,21 +56,21 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_script_progression "Integrating service in YunoHost..."
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server and $app's service..." --weight=1
+ynh_script_progression "Reloading NGINX web server and $app's service..."
 
-ynh_systemd_action --service_name=transmission-daemon --action=start --log_path="systemd"
+ynh_systemctl --service=transmission-daemon --action=start --log_path="systemd"
 
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemctl --service=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Restoration completed for $app" --last
+ynh_script_progression "Restoration completed for $app"
