@@ -6,22 +6,26 @@ source /usr/share/yunohost/helpers
 #=================================================
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
+ynh_script_progression "Removing system configurations related to $app..."
 
 if yunohost service status transmission-daemon >/dev/null 2>&1; then
 	yunohost service remove transmission-daemon
 fi
 
-ynh_remove_nginx_config
+ynh_config_remove_nginx
 
-ynh_secure_remove --file=/usr/share/transmission
+ynh_safe_rm "/etc/transmission-daemon/settings.json"
 
-ynh_secure_remove --file=/var/lib/transmission-daemon
+# Web interface
+ynh_safe_rm /usr/share/transmission
+
+# And data
+ynh_safe_rm /var/lib/transmission-daemon
 
 # Kernel parameters
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-	ynh_secure_remove --file=/etc/sysctl.d/90-transmission.conf
+	ynh_safe_rm /etc/sysctl.d/90-transmission.conf
 	sysctl --load=/etc/sysctl.d/90-transmission.conf
 fi
 
@@ -29,4 +33,4 @@ fi
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Removal of $app completed" --last
+ynh_script_progression "Removal of $app completed"
