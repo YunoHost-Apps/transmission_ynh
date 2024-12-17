@@ -23,7 +23,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 This app integrates with YunoHost's multimedia directories
 
 
-**Поставляемая версия:** 3.00~ynh7
+**Поставляемая версия:** 3.00~ynh8
 
 ## Снимки экрана
 
