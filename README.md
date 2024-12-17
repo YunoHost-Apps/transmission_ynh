@@ -5,7 +5,9 @@ It shall NOT be edited by hand.
 
 # Transmission for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![Working status](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![Integration level](https://apps.yunohost.org/badge/integration/transmission)](https://ci-apps.yunohost.org/ci/apps/transmission/)
+![Working status](https://apps.yunohost.org/badge/state/transmission)
+![Maintenance status](https://apps.yunohost.org/badge/maintained/transmission)
 
 [![Install Transmission with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
@@ -21,7 +23,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 This app integrates with YunoHost's multimedia directories
 
 
-**Shipped version:** 3.00~ynh7
+**Shipped version:** 3.00~ynh8
 
 ## Screenshots
 

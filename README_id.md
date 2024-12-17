@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Transmission untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/transmission)](https://ci-apps.yunohost.org/ci/apps/transmission/)
+![Status kerja](https://apps.yunohost.org/badge/state/transmission)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/transmission)
 
 [![Pasang Transmission dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
@@ -21,7 +23,7 @@ Transmission is a fast, easy, and free BitTorrent client.
 This app integrates with YunoHost's multimedia directories
 
 
-**Versi terkirim:** 3.00~ynh7
+**Versi terkirim:** 3.00~ynh8
 
 ## Tangkapan Layar
 
