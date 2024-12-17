@@ -8,11 +8,12 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 rpcpassword=$(ynh_string_random)
+ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value=false
 
 #=================================================
 # CREATE DATA DIRECTORY PERMISSIONS
 #=================================================
-ynh_script_progression "Set data directory permissions..."
+ynh_script_progression --message="Set data directory permissions..."
 
 chmod -R 775 $data_dir
 chmod -R 775 $data_dir/watched
@@ -22,17 +23,18 @@ chown -R debian-transmission: "$data_dir"/{progress,watched}
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression "Configuring NGINX web server..."
+ynh_script_progression --message="Configuring NGINX web server..." --weight=2
 
-ynh_config_add_nginx
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression "Adding $app's configuration..."
+ynh_script_progression --message="Adding a configuration file..." --weight=2
 
 # Transmission has to be stopped before modifying its config
-ynh_systemctl --service=transmission-daemon --action=stop
+ynh_systemd_action --service_name=transmission-daemon --action=stop
 
 if [ "$path" != "/" ]
 then
@@ -41,14 +43,14 @@ else
 	path_less="$path"
 fi
 
-ynh_config_add --template="settings.json" --destination="/etc/transmission-daemon/settings.json"
+ynh_add_config --template="../conf/settings.json" --destination="$SETTINGS_FILE"
 
-chmod 400 "/etc/transmission-daemon/settings.json"
-chown debian-transmission:debian-transmission "/etc/transmission-daemon/settings.json"
+chmod 400 "$SETTINGS_FILE"
+chown debian-transmission:debian-transmission "$SETTINGS_FILE"
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-	ynh_config_add --template="90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
+	ynh_add_config --template="../conf/90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
 
 	chmod 400 "/etc/sysctl.d/90-transmission.conf"
 	chown debian-transmission:debian-transmission "/etc/sysctl.d/90-transmission.conf"
@@ -59,7 +61,7 @@ fi
 #=================================================
 # YUNOHOST MULTIMEDIA INTEGRATION
 #=================================================
-ynh_script_progression "Adding multimedia directories..."
+ynh_script_progression --message="Adding multimedia directories..." --weight=4
 
 ynh_multimedia_build_main_dir
 
@@ -78,26 +80,27 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 
 cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
 cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
-ynh_replace --match="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" --replace="<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" --file="/usr/share/transmission/web/index.html"
+ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression "Integrating service in YunoHost..."
+ynh_script_progression --message="Integrating service in YunoHost..."
 
 yunohost service add transmission-daemon --description="BitTorrent Client" --log="/var/log/$app/$app.log" --needs_exposed_ports="$port_peer"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression "Starting $app's systemd service..."
+ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemctl --service=transmission-daemon --action="start" --log_path="systemd"
+# Start a systemd service
+ynh_systemd_action --service_name=transmission-daemon --action="start" --log_path="systemd"
 
 #=================================================
 # RETRIEVE HASHED PASSWORD
 #=================================================
-ynh_script_progression "Saving the encrypted password..."
+ynh_script_progression --message="Saving the encrypted password..."
 
 _wait_and_save_rcp_password_hash
 
@@ -105,4 +108,4 @@ _wait_and_save_rcp_password_hash
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression "Installation of $app completed"
+ynh_script_progression --message="Installation of $app completed" --last
