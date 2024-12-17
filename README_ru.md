@@ -5,7 +5,9 @@
 
 # Transmission для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/transmission.svg)](https://ci-apps.yunohost.org/ci/apps/transmission/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/transmission.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/transmission.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/transmission)](https://ci-apps.yunohost.org/ci/apps/transmission/)
+![Состояние работы](https://apps.yunohost.org/badge/state/transmission)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/transmission)
 
 [![Установите Transmission с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=transmission)
 
