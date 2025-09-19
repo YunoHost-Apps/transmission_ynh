@@ -78,6 +78,28 @@ _patch_download_locations() {
     done
 }
 
+_add_download_button() {
+    if [[ $YNH_DEBIAN_VERSION == "bookworm" ]]; then
+        local web_dir=/usr/share/transmission/web
+        local img_file="$web_dir/style/transmission/images/toolbar-downloads.png"
+        local css_file="$web_dir/style/transmission/common.css"
+        local match='<div id="toolbar-inspector" title="Toggle Inspector"></div>'
+        local replace='<div id="toolbar-inspector" title="Toggle Inspector"></div><div id="toolbar-separator"></div><a href="../../downloads/" id="toolbar-downloads" title="Downloads" target="_blank"></a>'
+        ynh_replace_string "$match" "$replace" "$web_dir/index.html"
+    elif [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
+        local web_dir=/usr/share/transmission/public_html
+        local img_file="$web_dir/images/toolbar-downloads.png"
+        local css_file="$web_dir/transmission-app.css"
+        patch -d /usr/share/transmission/public_html < ../sources/extra_files/app/0001-Add-downloads-button.patch
+    fi
+
+    cp ../sources/extra_files/app/toolbar-downloads.png "$img_file"
+
+    if ! grep --quiet "Inserted by Yunohost install script" "$css_file"; then
+        cat ../sources/extra_files/app/ynh_common.css >> "$css_file"
+    fi
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================

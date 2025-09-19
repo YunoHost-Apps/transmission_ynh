@@ -73,13 +73,7 @@ ynh_multimedia_addfolder --source_dir="$data_dir/watched" --dest_dir="share/Torr
 # PATCH SOURCE TO ADD A DOWNLOAD BUTTON
 #=================================================
 
-cp ../sources/extra_files/app/toolbar-downloads.png /usr/share/transmission/web/style/transmission/images/toolbar-downloads.png
-if ! grep --quiet "Inserted by Yunohost install script" /usr/share/transmission/web/style/transmission/common.css
-then
-	cat ../sources/extra_files/app/ynh_common.css >> /usr/share/transmission/web/style/transmission/common.css
-fi
-
-ynh_replace_string "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div>$" "<div id=\"toolbar-inspector\" title=\"Toggle Inspector\"></div><div id=\"toolbar-separator\"></div><a href=\"../../downloads/\" id=\"toolbar-downloads\" title=\"Downloads\" target=\"_blank\"></a>" /usr/share/transmission/web/index.html
+_add_download_button
 
 #=================================================
 # SET DATA DIRECTORY PERMISSIONS
