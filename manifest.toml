@@ -64,4 +64,9 @@ ram.runtime = "50M"
     peer.exposed = "Both"
 
     [resources.apt]
-    packages = "transmission-daemon, transmission-cli, transmission-common, acl"
+    packages = [
+        "acl",
+        "transmission-cli",
+        "transmission-common",
+        "transmission-daemon",
+    ]
