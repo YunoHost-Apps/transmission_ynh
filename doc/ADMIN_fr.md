@@ -4,7 +4,7 @@ Les fichiers téléchargés sont stockés dans `__DATA_DIR__` et devraient être
 
 Pour télécharger les fichiers, vous pouvez aussi utiliser un client SFTP, la commande SCP, ou encore configurer une app comme Nextcloud pour pouvoir naviguer dans le dossier correspondant.
 
-## Alternative à l'interface web
+## Alternative à l'interface Web
 
 Vous pouvez utiliser le client de contrôle à distance des différentes plateformes pour gérer votre serveur Transmission :
 

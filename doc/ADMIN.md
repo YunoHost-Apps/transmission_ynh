@@ -4,7 +4,7 @@ Torrents are located in `__DATA_DIR__` and should be accessible from `https://__
 
 Alternatively, you can download the files using an SFTP client, the SCP command, or you configure another app such as Nextcloud to be able to browse these files.
 
-## Alternative to the web ui
+## Alternative to the Web UI
 
 You can use remote client on different platforms to manage your Transmission server:
 
