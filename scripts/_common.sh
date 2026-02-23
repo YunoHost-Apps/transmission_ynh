@@ -90,13 +90,13 @@ _add_download_button() {
         local web_dir=/usr/share/transmission/public_html
         local img_file="$web_dir/images/toolbar-downloads.png"
         local css_file="$web_dir/transmission-app.css"
-        patch -d /usr/share/transmission/public_html < ../sources/extra_files/app/0001-Add-downloads-button.patch
+        patch -d /usr/share/transmission/public_html < ../conf/sources/0001-Add-downloads-button.patch
     fi
 
-    cp ../sources/extra_files/app/toolbar-downloads.png "$img_file"
+    cp ../conf/sources/toolbar-downloads.png "$img_file"
 
     if ! grep --quiet "Inserted by Yunohost install script" "$css_file"; then
-        cat ../sources/extra_files/app/ynh_common.css >> "$css_file"
+        cat ../conf/sources/ynh_common.css >> "$css_file"
     fi
 }
 
