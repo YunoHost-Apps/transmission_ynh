@@ -17,7 +17,8 @@ code = "https://github.com/transmission/transmission"
 cpe = "cpe:2.3:a:transmissionbt:transmission"
 
 [integration]
-yunohost = ">= 12.1.40"
+yunohost = ">= 12.1.38"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
 
