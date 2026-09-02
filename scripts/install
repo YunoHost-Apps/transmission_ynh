@@ -8,6 +8,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 rpcpassword=$(ynh_string_random)
+ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value=false
 
 #=================================================
 # CREATE DATA DIRECTORY PERMISSIONS
@@ -30,7 +31,7 @@ ynh_config_add_nginx
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression "Adding $app's configuration..."
+ynh_script_progression "Adding a configuration file..."
 
 # Transmission has to be stopped before modifying its config
 ynh_systemctl --service=transmission-daemon --action=stop
@@ -49,7 +50,7 @@ chown debian-transmission:debian-transmission "$SETTINGS_FILE"
 
 if [ -e /proc/sys/net/core/rmem_max ]
 then
-	ynh_config_add --template="90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
+	ynh_config_add --template="../conf/90-transmission.conf" --destination="/etc/sysctl.d/90-transmission.conf"
 
 	chmod 400 "/etc/sysctl.d/90-transmission.conf"
 	chown debian-transmission:debian-transmission "/etc/sysctl.d/90-transmission.conf"
@@ -89,7 +90,7 @@ yunohost service add transmission-daemon --description="BitTorrent Client" --log
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression "Starting $app's systemd service..."
+ynh_script_progression "Starting a systemd service..."
 
 # Start a systemd service
 ynh_systemctl --service=transmission-daemon --action="start" --log_path="systemd"
