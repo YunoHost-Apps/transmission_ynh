@@ -85,7 +85,7 @@ _add_download_button() {
         local css_file="$web_dir/style/transmission/common.css"
         local match='<div id="toolbar-inspector" title="Toggle Inspector"></div>'
         local replace='<div id="toolbar-inspector" title="Toggle Inspector"></div><div id="toolbar-separator"></div><a href="../../downloads/" id="toolbar-downloads" title="Downloads" target="_blank"></a>'
-        ynh_replace_string "$match" "$replace" "$web_dir/index.html"
+        ynh_replace --match="$match" --replace="$replace" --file="$web_dir/index.html"
     elif [[ $YNH_DEBIAN_VERSION == "trixie" ]]; then
         local web_dir=/usr/share/transmission/public_html
         local img_file="$web_dir/images/toolbar-downloads.png"
