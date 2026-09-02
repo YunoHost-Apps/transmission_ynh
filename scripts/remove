@@ -14,8 +14,12 @@ fi
 
 ynh_config_remove_nginx
 
+ynh_safe_rm "$SETTINGS_FILE"
+
+# Web interface
 ynh_safe_rm /usr/share/transmission
 
+# And data
 ynh_safe_rm /var/lib/transmission-daemon
 
 # Kernel parameters
