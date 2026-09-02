@@ -18,6 +18,7 @@ cpe = "cpe:2.3:a:transmissionbt:transmission"
 
 [integration]
 yunohost = ">= 12.1.40"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
 
@@ -45,6 +46,7 @@ ram.runtime = "50M"
     [resources.system_user]
 
     [resources.install_dir]
+    group = "www-data:r-x"
 
     [resources.data_dir]
     subdirs = [ "progress", "completed", "watched" ]
